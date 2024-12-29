@@ -1,5 +1,4 @@
 ﻿#include "UseImGui.h"
-#include "./Graph/Graph.h"
 #include <iostream>
 #include "Graph/GraphContainer.h"
 
@@ -57,7 +56,7 @@ void UseImGui::ResetGeneratorParameters() {
     m_new_generator_min_amplitude = -1.0;
     m_new_generator_max_amplitude = 1.0;
 }
-
+/*
 void UseImGui::renderFunctionWindow()
 {
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
@@ -120,7 +119,8 @@ void UseImGui::renderFunctionWindow()
         i++;
     }
     ImGui::EndChild();
-}
+}*/
+/*
 void UseImGui::renderSelectedGraphInfo()
 {
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
@@ -175,7 +175,8 @@ void UseImGui::renderSelectedGraphInfo()
     }
     ImGui::EndChild();
 }
-
+*/
+/*
 void UseImGui::renderNewGraphMaker()
 {
     ImGui::SetNextWindowPos(ImVec2(100.0, 100.0));
@@ -221,7 +222,7 @@ void UseImGui::renderNewGraphMaker()
 
     ImGui::End();
 }
-
+*/
 void UseImGui::renderPlotController()
 {
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
@@ -378,23 +379,22 @@ void UseImGui::renderAddGenerated()
     ImGui::SetNextItemWidth(250.0f);
     const char* signalOptions[] = {
         "Constant",             //0
-        "A*sin(2πft + φ)",      //1
-        "A*cos(2πft + φ)",      //2
-        "Rectangular Function", //3
-        "Square Wave",          //4
-        "Triangular Function",  //5
-        "Triangular Wave",      //6
-        "Sawtooth Wave",        //7
-        "Step Function",        //8
-        "Sgn Function",         //9
-        "Impulse Signal",       //10
-        "Pulse Train",          //11
-        "Ramp Function",        //12
-        "Exponential Function", //13
-        "Gaussian Function",    //14
-        "Chirp Signal",         //15
-        "White Noise",          //16
-        "Uniform Noise"         //17
+        "A*cos(2πft + φ)",      //1
+        "Rectangular Function", //2
+        "Square Wave",          //3
+        "Triangular Function",  //4
+        "Triangular Wave",      //5
+        "Sawtooth Wave",        //6
+        "Step Function",        //7
+        "Sgn Function",         //8
+        "Impulse Signal",       //9
+        "Pulse Train",          //10
+        "Ramp Function",        //11
+        "Exponential Function", //12
+        "Gaussian Function",    //13
+        "Chirp Signal",         //14
+        "White Noise",          //15
+        "Uniform Noise"         //16
         // TODO: Add modulations...
     };
 
@@ -410,7 +410,6 @@ void UseImGui::renderAddGenerated()
         ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 2.0);
         break;
     case 1: 
-    case 2: 
         ImGui::SetNextItemWidth(250.0f);
         ImGui::InputDouble("  Frequency (Hz)", &m_new_generator_frequency, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f);
@@ -418,56 +417,56 @@ void UseImGui::renderAddGenerated()
         ImGui::SetNextItemWidth(250.0f);
         ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);
         break;
-    case 3: 
+    case 2: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  width", &m_new_generator_width, 0.1, 2.0);
         break;
-    case 4: 
+    case 3: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency (Hz)", &m_new_generator_frequency, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::SliderFloat("  Duty cycle", &m_new_generator_duty_cycle, 0.0f, 100.0f);
         break;
-    case 5:
+    case 4:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  width", &m_new_generator_width, 0.1, 2.0);
         break;
 
-    case 6:  
-    case 7:   
+    case 5:  
+    case 6:   
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency (Hz)", &m_new_generator_frequency, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);
         break;
-    case 8:
+    case 7:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, -10.0f, 10.0f);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Step Position", &m_new_generator_step_time, -10.0f, 10.0f);
         break;
 
-    case 9: 
+    case 8: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, -10.0f, 10.0f);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Step Position", &m_new_generator_step_time, -10.0f, 10.0f);
         break;
-    case 10: 
+    case 9: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Impulse Position", &m_new_generator_step_time, -10.0f, 10.0f);
         break;
 
-    case 11:
+    case 10:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency/step (Hz)", &m_new_generator_frequency, 0.1, 10.0);
         break;
 
-    case 12: 
+    case 11: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  RampBegin", &m_new_generator_ramp_begin, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  RampEnd", &m_new_generator_ramp_end, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Slope k (as in xk+n)", &m_new_generator_slope, 0.1, 10.0);
         break;
 
-    case 13:
+    case 12:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  t (e^xt)", &m_new_generator_amplitude, 0.1, 2.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.1, 2.0);
         break;
 
-    case 14:
+    case 13:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Mean", &m_new_generator_mean, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Standard deviation", &m_new_generator_standard_deviation, 0.0, 360.0);
         if (m_new_generator_standard_deviation < 0.0) {
@@ -475,18 +474,18 @@ void UseImGui::renderAddGenerated()
         }
         break;
 
-    case 15: 
+    case 14: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Initial Frequency (Hz)", &m_new_generator_initial_frequency, 0.1, 10.0); 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Final Frequency (Hz)", &m_new_generator_end_frequency, 0.1, 10.0);     
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);      
         break;
 
-    case 16: 
+    case 15: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Mean", &m_new_generator_mean, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Standard deviation", &m_new_generator_standard_deviation, 0.0, 360.0);
         break;
 
-    case 17: 
+    case 16: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Minimum Value", &m_new_generator_min_amplitude, -10.0, 10.0);       
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Maximum Value", &m_new_generator_max_amplitude, -10.0, 10.0);
         break;

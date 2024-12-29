@@ -16,7 +16,7 @@
 #include "imgui_impl_win32.h"
 #include <d3d9.h>
 #include <tchar.h>
-#include "./Graph/Graph.h"
+#include "./Graph/GraphTypes/Cosine.h"
 #include "UseImGui.h"
 #include "Graph/GraphContainer.h"
 
@@ -40,7 +40,7 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // Main code
 int main(int, char**)
 {
-    GraphContainer::instance()->addNewGraph("sin(x)/x", "Demo function", 10, -12, 12, "x", "f(x)");
+
 
     UseImGui g;
     // Create application window
@@ -84,6 +84,10 @@ int main(int, char**)
     ImVec4 clear_color = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
     //ImGuiIO& io = ImGui::GetIO();
     //io.FontGlobalScale = 1.2f; // Scale all fonts globally (1.5x larger)
+
+    Graph* gg = new Cosine(GraphType::Cosine, 19, 1, 0, "cos", 60, 0, 100090, "x", "y");
+    gg->plotGraph();
+
 
     // Main loop
     bool done = false;
