@@ -47,7 +47,9 @@ int main(int, char**)
     //ImGui_ImplWin32_EnableDpiAwareness();
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
     ::RegisterClassExW(&wc);
-    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"EasyPlotter", WS_OVERLAPPEDWINDOW, 100, 100, 800, 600, nullptr, nullptr, wc.hInstance, nullptr);
+    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"EasyPlotter", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 720, nullptr, nullptr, wc.hInstance, nullptr);
+
+
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -73,12 +75,15 @@ int main(int, char**)
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX9_Init(g_pd3dDevice);
 
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 20.0f); // Adjust size as needed
+    io.Fonts->Build();
     // Our state
     bool show_demo_window = true;
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-    ImGuiIO& io = ImGui::GetIO();
-    io.FontGlobalScale = 1.2f; // Scale all fonts globally (1.5x larger)
+    //ImGuiIO& io = ImGui::GetIO();
+    //io.FontGlobalScale = 1.2f; // Scale all fonts globally (1.5x larger)
 
     // Main loop
     bool done = false;
