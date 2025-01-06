@@ -9,7 +9,7 @@ private:
 
 public:
 
-    explicit Cosine(GraphType graph_type, double amplitude, double frequency, double phase_shift, std::string graph_name, double sample_freq, double x_min, double x_max, std::string label_x = "", std::string label_y = "");
+    explicit Cosine(double amplitude, double frequency, double phase_shift, std::string graph_name, double sample_freq, double x_min, double x_max, std::string label_x = "", std::string label_y = "");
     ~Cosine();
 
     void calculateGraphData() override;

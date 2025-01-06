@@ -17,8 +17,10 @@
 #include <d3d9.h>
 #include <tchar.h>
 #include "./Graph/GraphTypes/Cosine.h"
+#include "./Graph/GraphTypes/WhiteNoise.h"
+#include "./Graph/GraphTypes/GaussianFunction.h"
 #include "UseImGui.h"
-#include "Graph/GraphContainer.h"
+#include "./Graph/PlotContainer.h"
 
 #define VERSION 0.0.1;
 
@@ -85,9 +87,14 @@ int main(int, char**)
     //ImGuiIO& io = ImGui::GetIO();
     //io.FontGlobalScale = 1.2f; // Scale all fonts globally (1.5x larger)
 
-    Graph* gg = new Cosine(GraphType::Cosine, 19, 1, 0, "cos", 60, 0, 100090, "x", "y");
-    gg->plotGraph();
+    PlotContainer::instance()->addPlot("D:\\tempFolder\\tempFolder\\tempFolder", "plot1");
 
+    Plot* p = PlotContainer::instance()->getPlotList().at(0);
+
+    p->addNewGraph(new Cosine(19, 1, 0, "cos1", 60, 0, 10, "x", "y"));
+    p->addNewGraph(new WhiteNoise(2, 1, "white", 25, 0, 5, "x", "y"));
+    p->addNewGraph(new GaussianFunction(1, 3, "uniform", 100, -10, 10, "x", "y"));
+    
 
     // Main loop
     bool done = false;
@@ -135,12 +142,17 @@ int main(int, char**)
         ImGui::NewFrame();
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+        ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
+        ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
+        ImGui::Begin("EasyPlot", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollWithMouse);
 
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
             g.Render();
+            PlotContainer::instance()->renderPlotList();
+            p->renderGraphList();
         }
-
+        ImGui::End();
         // 3. Show another simple window.
         if (show_another_window)
         {

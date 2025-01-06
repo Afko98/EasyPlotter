@@ -2,6 +2,9 @@
 #include "exprtk.hpp"
 #include "../gnuplot-iostream.h"
 #include <filesystem>
+#include "../Graph/Plot.h"
+
+class Plot;
 
 enum class GraphType {
 	Constant,             //0
@@ -45,9 +48,12 @@ protected:
 	GraphType m_graph_type;
 	double m_sample_frequency;
 	double m_x_min, m_x_max;
+	Plot* m_parent;
 
 	float m_line_colour[4];
 	LineType m_lint_type;
+
+	bool saveDataToFile();
 
 private:
 	Gnuplot* gp;
@@ -78,6 +84,8 @@ public:
 
 	GraphType getGraphType() { return m_graph_type; }
 	void setGraphType(GraphType graph_type) { m_graph_type = graph_type; }
+
+	void setParent(Plot* parent);
 
 	void plotGraph();
 	virtual void calculateGraphData() = 0;

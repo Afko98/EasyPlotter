@@ -1,6 +1,5 @@
 ﻿#include "UseImGui.h"
 #include <iostream>
-#include "Graph/GraphContainer.h"
 
 char UseImGui::m_selected_function[128] = ""; // Initializing the buffer with an empty string
 char UseImGui::m_selected_title[128] = "";
@@ -231,8 +230,9 @@ void UseImGui::renderPlotController()
     ImGui::SetCursorPos(ImVec2(1, 1)); // Adjust offset
     ImGui::BeginChild("Plot selector", ImVec2(250, windowSize.y-2), true, ImGuiWindowFlags_NoMove);
 
-    ImGui::Text("Plot selector");
-
+    ImGui::Spacing();
+    ImGui::SetCursorPos(ImVec2(50, 12)); // Adjust offset
+    ImGui::Button("Add New Plot", ImVec2(150, 36));
     ImGui::EndChild();
 }
 
@@ -244,7 +244,10 @@ void UseImGui::renderGraphController()
     ImGui::SetCursorPos(ImVec2(250, 1)); // Adjust offset
     ImGui::BeginChild("Graph selector", ImVec2(250, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
 
-    ImGui::Text("Graph selector");
+    
+    ImGui::Spacing();
+    ImGui::SetCursorPos(ImVec2(50, 12)); // Adjust offset
+    ImGui::Button("Add New Graph", ImVec2(150, 36));
 
     ImGui::EndChild();
 }
@@ -379,17 +382,14 @@ void UseImGui::renderAddGenerated()
     ImGui::SetNextItemWidth(250.0f);
     const char* signalOptions[] = {
         "Constant",             //0
-        "A*cos(2πft + φ)",      //1
+        "A*cos(2πft + φ)",      //1  TODO phase from deg to rad
         "Rectangular Function", //2
         "Square Wave",          //3
         "Triangular Function",  //4
         "Triangular Wave",      //5
         "Sawtooth Wave",        //6
-        "Step Function",        //7
-        "Sgn Function",         //8
         "Impulse Signal",       //9
         "Pulse Train",          //10
-        "Ramp Function",        //11
         "Exponential Function", //12
         "Gaussian Function",    //13
         "Chirp Signal",         //14
@@ -420,6 +420,7 @@ void UseImGui::renderAddGenerated()
     case 2: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  width", &m_new_generator_width, 0.1, 2.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Shift", &m_new_generator_phase_shift, 0.0, 2.0);
         break;
     case 3: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency (Hz)", &m_new_generator_frequency, 0.1, 10.0);
@@ -430,6 +431,7 @@ void UseImGui::renderAddGenerated()
     case 4:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  width", &m_new_generator_width, 0.1, 2.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Shift", &m_new_generator_phase_shift, 0.0, 2.0);
         break;
 
     case 5:  
@@ -438,32 +440,19 @@ void UseImGui::renderAddGenerated()
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);
         break;
-    case 7:
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, -10.0f, 10.0f);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Step Position", &m_new_generator_step_time, -10.0f, 10.0f);
-        break;
-
-    case 8: 
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, -10.0f, 10.0f);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Step Position", &m_new_generator_step_time, -10.0f, 10.0f);
-        break;
     case 9: 
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Impulse Position", &m_new_generator_step_time, -10.0f, 10.0f);
         break;
 
     case 10:
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency/step (Hz)", &m_new_generator_frequency, 0.1, 10.0);
-        break;
-
-    case 11: 
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  RampBegin", &m_new_generator_ramp_begin, 0.1, 10.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  RampEnd", &m_new_generator_ramp_end, 0.1, 10.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Slope k (as in xk+n)", &m_new_generator_slope, 0.1, 10.0);
         break;
 
     case 12:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  t (e^xt)", &m_new_generator_amplitude, 0.1, 2.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.1, 2.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Shift", &m_new_generator_phase_shift, 0.1, 2.0);
         break;
 
     case 13:
@@ -475,6 +464,7 @@ void UseImGui::renderAddGenerated()
         break;
 
     case 14: 
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Initial Frequency (Hz)", &m_new_generator_initial_frequency, 0.1, 10.0); 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Final Frequency (Hz)", &m_new_generator_end_frequency, 0.1, 10.0);     
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);      
@@ -558,9 +548,6 @@ void UseImGui::Render() {
     static int counter = 0;
     
 
-    ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
-    ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
-    ImGui::Begin("EasyPlot", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollWithMouse);
 
     renderPlotController();
     renderGraphController();
@@ -598,6 +585,6 @@ void UseImGui::Render() {
     //
 
   
-    ImGui::End();
+    
 }
 

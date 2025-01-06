@@ -1,6 +1,28 @@
 #include "Graph.h"
 
 
+bool Graph::saveDataToFile()
+{
+    if (!m_parent || m_parent->getDirPath() == "")
+        return false;
+    std::ofstream dataFile(m_parent->getDirPath() + "\\" + m_graph_name + ".epd", std::ios::binary); // Open the file in binary mode
+
+    if (!dataFile.is_open()) {
+        std::cerr << m_parent->getDirPath() + "\\" + m_graph_name + ".epd" << std::endl;
+        return false;
+    }
+
+    // Write the y values to the binary file
+    for (const auto& y : m_graph_data) {
+        dataFile.write(reinterpret_cast<const char*>(&y), sizeof(double));
+    }
+
+    dataFile.close(); // Close the file
+    m_graph_data.clear();
+    m_graph_data.shrink_to_fit();
+    return true;
+}
+
 Graph::Graph(GraphType graph_type, std::string graph_name, double sample_freq, double x_min, double x_max, std::string label_x, std::string label_y)
 {
     double range = x_max - x_min;
@@ -31,6 +53,7 @@ Graph::Graph(GraphType graph_type, std::string graph_name, double sample_freq, d
     m_x_label = label_x;
     m_y_label = label_y;
     m_graph_type = graph_type;
+    m_parent = nullptr;
 }
 
 Graph::~Graph() {
@@ -52,9 +75,24 @@ void Graph::setXMax(double x_max)
     m_x_max = x_max;
 }
 
-void Graph::plotGraph()
-{
-    *gp << "plot '-' using ($0 * " << 1.0 / m_sample_frequency << " + " << m_x_min << "):1 with lines title 'v0'\n";
+void Graph::setParent(Plot* parent)
+{     
+    if (m_parent)
+    {
+        m_parent = parent;
+        calculateGraphData();
+    }
+    else
+    {
+        m_parent = parent;
+        saveDataToFile();
+    }
+}
 
-    gp->send(m_graph_data);
+void Graph::plotGraph() {
+
+    //if has parent load from file, if not load directly from variable
+    *gp << "plot '" << m_parent->getDirPath()+"\\"+m_graph_name+".epd" << "' binary format='%double' using 1 with lines title 'v0'\n";
+    gp->flush();  // Ensure the command is sent
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Optional: Give Gnuplot time to render
 }
