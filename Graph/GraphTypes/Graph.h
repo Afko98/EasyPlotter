@@ -51,7 +51,8 @@ protected:
 	Plot* m_parent;
 
 	float m_line_colour[4];
-	LineType m_lint_type;
+	int m_line_type;
+	static const char* lineTypes[4];
 
 	bool saveDataToFile();
 
@@ -59,7 +60,7 @@ private:
 	Gnuplot* gp;
 
 public:
-	Graph(GraphType graph_type, std::string graph_name, double sample_freq, double x_min, double x_max, std::string label_x = "", std::string label_y = "");
+	Graph(GraphType graph_type, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x = "", std::string label_y = "");
 	virtual ~Graph() = 0;
 
 	std::string getGraphName() { return m_graph_name; }
@@ -82,6 +83,8 @@ public:
 
 	int getGraphSize() { return m_graph_data.size(); }
 
+	std::vector<double> getGraphData();
+
 	GraphType getGraphType() { return m_graph_type; }
 	void setGraphType(GraphType graph_type) { m_graph_type = graph_type; }
 
@@ -90,6 +93,9 @@ public:
 	void plotGraph();
 	virtual void calculateGraphData() = 0;
 	virtual void renderImGuiEditGraph() = 0;
+	virtual void copyArgumentsForGui() = 0;
+
+	void calculateIntegral();
 
 	//	add friend functions for calculating operations with 2 graphs;
 	//	add member functions for calculating ingeral, diferencial... single graph operations;

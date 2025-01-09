@@ -1,6 +1,6 @@
 #include "SawtoothWave.h"
-SawtoothWave::SawtoothWave(double amplitude, double frequency, double phase_shift, std::string graph_name, double sample_freq, double x_min, double x_max, std::string label_x, std::string label_y)
-    : Graph(GraphType::Sawtooth_Wave, graph_name, sample_freq, x_min, x_max, label_x, label_y), m_amplitude(amplitude), m_phase_shift(phase_shift), m_frequency(frequency)
+SawtoothWave::SawtoothWave(double amplitude, double frequency, double phase_shift, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
+    : Graph(GraphType::Sawtooth_Wave, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_amplitude(amplitude), m_phase_shift(phase_shift), m_frequency(frequency)
 {
     calculateGraphData();
 }

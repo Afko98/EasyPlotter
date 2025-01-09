@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Plot.h"
+#include "../ImGuiFileDialog/ImGuiFileDialog.h"
 
 class Plot;
 class Graph;
@@ -11,6 +12,8 @@ class PlotContainer
 	PlotContainer() {};
 	
 	std::vector<Plot *> m_plot_list;
+
+	static Plot* m_selected_plot;
 
 public:
 	static PlotContainer* instance();

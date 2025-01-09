@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <filesystem>
+#include <cstdio>
 #include "../Graph/GraphTypes/Graph.h"
 #include "../gnuplot-iostream.h"
 #include "../UseImGui.h"
@@ -13,6 +14,8 @@ class Plot
 	std::vector<Graph*>m_graph_list;
 	std::string m_name;
 	std::string m_dir_path;
+
+	Graph* m_graph_edit_selected;
 
 	Gnuplot * gp;
 

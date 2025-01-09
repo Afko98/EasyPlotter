@@ -222,35 +222,6 @@ void UseImGui::renderNewGraphMaker()
     ImGui::End();
 }
 */
-void UseImGui::renderPlotController()
-{
-    ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-
-    // Set position for the right-aligned box
-    ImGui::SetCursorPos(ImVec2(1, 1)); // Adjust offset
-    ImGui::BeginChild("Plot selector", ImVec2(250, windowSize.y-2), true, ImGuiWindowFlags_NoMove);
-
-    ImGui::Spacing();
-    ImGui::SetCursorPos(ImVec2(50, 12)); // Adjust offset
-    ImGui::Button("Add New Plot", ImVec2(150, 36));
-    ImGui::EndChild();
-}
-
-void UseImGui::renderGraphController()
-{
-    ImVec2 windowSize = ImGui::GetIO().DisplaySize;
-
-    // Set position for the right-aligned box
-    ImGui::SetCursorPos(ImVec2(250, 1)); // Adjust offset
-    ImGui::BeginChild("Graph selector", ImVec2(250, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
-
-    
-    ImGui::Spacing();
-    ImGui::SetCursorPos(ImVec2(50, 12)); // Adjust offset
-    ImGui::Button("Add New Graph", ImVec2(150, 36));
-
-    ImGui::EndChild();
-}
 
 void UseImGui::renderAddNewGraph()
 {
@@ -547,11 +518,7 @@ void UseImGui::Render() {
     static float f = 0.0f;
     static int counter = 0;
     
-
-
-    renderPlotController();
-    renderGraphController();
-    renderAddNewGraph();
+    //renderAddNewGraph();
 
     //ImGui::Dummy(ImVec2(5.0f, 10.0f));
     //if (ImGui::Button("Add new\n graph", ImVec2(95.0f, 80.0f)))

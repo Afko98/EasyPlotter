@@ -45,6 +45,7 @@ Plot::Plot(std::string dir_path, std::string name) : m_name(name), m_dir_path(di
     {
         //dir already exists, check files
     }
+    m_graph_edit_selected = nullptr;
 }
 
 Plot::~Plot()
@@ -64,6 +65,8 @@ void Plot::addNewGraph(Graph* g)
 
 void Plot::removeGraph(Graph* g)
 {
+    std::remove((getDirPath() + "\\" + g->getGraphName() + ".epd").c_str());
+
     auto it = std::find(m_graph_list.begin(), m_graph_list.end(), g);
 
     if (it != m_graph_list.end())
@@ -78,6 +81,22 @@ void Plot::renderGraphList()
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
     // Set position for the right-aligned box
+    ImGui::SetCursorPos(ImVec2(250, 1)); // Adjust offset
+    ImGui::BeginChild("Graph selector", ImVec2(250, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
+
+
+    ImGui::Spacing();
+    ImGui::SetCursorPos(ImVec2(50, 12)); // Adjust offset
+    if (ImGui::Button("Add New Graph", ImVec2(150, 36)))
+    {
+        m_graph_edit_selected = nullptr;
+        UseImGui::renderAddNewGraph();
+    }
+
+    ImGui::EndChild();
+
+
+    // Set position for the right-aligned box
     ImGui::SetCursorPos(ImVec2(250, 60)); // Adjust offset
     ImGui::BeginChild("Graph selector##list", ImVec2(250, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
     ImGui::Text("Graph List:");
@@ -85,18 +104,51 @@ void Plot::renderGraphList()
     
     for (auto g : m_graph_list)
     {
-        ImGui::BeginChild(("Graph selector##" + g->getGraphName()).c_str(), ImVec2(230, 75), true, ImGuiWindowFlags_NoMove);
+        ImGui::BeginChild(("Graph selector##" + g->getGraphName()).c_str(), ImVec2(230, 100), true, ImGuiWindowFlags_NoMove);
         ImGui::Text(("Graph: " + g->getGraphName()).c_str());
         ImGui::Dummy(ImVec2(10, 0));
-        if (ImGui::Button(("  Plot  ##" + g->getGraphName()).c_str(), ImVec2(102, 25))) {
+        if (ImGui::Button(("  Plot  ##" + g->getGraphName()).c_str(), ImVec2(102, 25)))
+        {
             g->plotGraph();
         }
         ImGui::SameLine();
-        ImGui::Button(("  Option  ##" + g->getGraphName()).c_str(), ImVec2(102, 25));
+        if (ImGui::Button(("  Edit  ##" + g->getGraphName()).c_str(), ImVec2(102, 25)))
+        {
+            m_graph_edit_selected = g;
+        }
+
+        if (ImGui::Button(("  Remove  ##" + g->getGraphName()).c_str(), ImVec2(102, 25)))
+        {
+            ImGui::OpenPopup("FullTextPopup");
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Calculate", ImVec2(102, 25)))
+        {
+            
+        }
+
+        if (ImGui::BeginPopup("FullTextPopup"))
+        {
+            ImGui::Text("Delete graph/file?");
+            if (ImGui::Button("Yes", ImVec2(102, 25)))
+            {
+                removeGraph(g);
+                ImGui::CloseCurrentPopup();
+            }
+            if (ImGui::Button("No", ImVec2(102, 25)))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
 
         ImGui::EndChild();
         ImGui::Dummy(ImVec2(10, 5));
     }
     
     ImGui::EndChild();
+    if (m_graph_edit_selected)
+    {
+        m_graph_edit_selected->renderImGuiEditGraph();
+    }
 }

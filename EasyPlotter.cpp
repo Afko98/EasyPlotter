@@ -88,14 +88,15 @@ int main(int, char**)
     //io.FontGlobalScale = 1.2f; // Scale all fonts globally (1.5x larger)
 
     PlotContainer::instance()->addPlot("D:\\tempFolder\\tempFolder\\tempFolder", "plot1");
-
+    PlotContainer::instance()->addPlot("D:\\tempFolder\\tempFolder1\\tempFolder", "plot2");
     Plot* p = PlotContainer::instance()->getPlotList().at(0);
+    Plot* p1 = PlotContainer::instance()->getPlotList().at(1);
 
-    p->addNewGraph(new Cosine(19, 1, 0, "cos1", 60, 0, 10, "x", "y"));
-    p->addNewGraph(new WhiteNoise(2, 1, "white", 25, 0, 5, "x", "y"));
-    p->addNewGraph(new GaussianFunction(1, 3, "uniform", 100, -10, 10, "x", "y"));
-    
-
+    float a[4] = { 0.0f,0.0f,0.0f,0.0f };
+    p->addNewGraph(new WhiteNoise(2, 1, "white", 25, 0, 5, a, 0, "x", "y"));
+    p1->addNewGraph(new WhiteNoise(2, 1, "w", 10, 0, 5, a, 0, "x", "y"));
+    p1->addNewGraph(new WhiteNoise(2, 1, "ww", 10, 0, 5, a, 0, "x", "y"));
+    p->addNewGraph(new WhiteNoise(2, 1, "www", 25, 0, 5, a, 0, "x", "y"));
     // Main loop
     bool done = false;
     while (!done)
@@ -150,7 +151,6 @@ int main(int, char**)
         {
             g.Render();
             PlotContainer::instance()->renderPlotList();
-            p->renderGraphList();
         }
         ImGui::End();
         // 3. Show another simple window.

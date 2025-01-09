@@ -10,15 +10,8 @@ class UseImGui {
 	void renderSelectedGraphInfo();
 	void renderNewGraphMaker();
 
-	void renderPlotController();
-	void renderGraphController();
-
 	
-	void renderAddNewGraph();
-	void renderAddMathFunction();
-	void renderAddGenerated();
-	void renderAddFromFile();
-	void renderAddFromFileEPFormat();
+	
 	
 	
 	static char m_selected_function[128];  // Allocate a fixed-size buffer and initialize it
@@ -56,4 +49,9 @@ class UseImGui {
 	static void ResetGeneratorParameters();
 public:
 	void Render();
+	static void renderAddNewGraph();
+	static void renderAddMathFunction();
+	static void renderAddGenerated();
+	static void renderAddFromFile();
+	static void renderAddFromFileEPFormat();
 };

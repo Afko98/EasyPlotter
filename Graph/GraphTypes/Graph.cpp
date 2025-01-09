@@ -1,5 +1,6 @@
 #include "Graph.h"
 
+const char* Graph::lineTypes[4] = { "Solid", "Dashed", "Dotted", "Dash-Dot" };
 
 bool Graph::saveDataToFile()
 {
@@ -23,7 +24,7 @@ bool Graph::saveDataToFile()
     return true;
 }
 
-Graph::Graph(GraphType graph_type, std::string graph_name, double sample_freq, double x_min, double x_max, std::string label_x, std::string label_y)
+Graph::Graph(GraphType graph_type, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
 {
     double range = x_max - x_min;
     if (range <= 0 && sample_freq <= 0)
@@ -54,6 +55,11 @@ Graph::Graph(GraphType graph_type, std::string graph_name, double sample_freq, d
     m_y_label = label_y;
     m_graph_type = graph_type;
     m_parent = nullptr;
+    for (int i = 0; i < 4; ++i) 
+    {
+        m_line_colour[i] = line_colour[i];
+    }
+    m_line_type = line_type;
 }
 
 Graph::~Graph() {
@@ -75,6 +81,37 @@ void Graph::setXMax(double x_max)
     m_x_max = x_max;
 }
 
+std::vector<double> Graph::getGraphData()  // reading from file...
+{
+    std::vector<double> data;
+
+    if (!m_parent)
+        return m_graph_data;
+
+    std::ifstream data_file(m_parent->getDirPath() + "\\" + m_graph_name + ".epd", std::ios::binary);
+    if (!data_file.is_open())
+    {
+        std::cerr << "Failed to open file for reading: " << m_graph_name + ".epd" << std::endl;
+        return std::vector<double>();
+    }
+
+    data_file.seekg(0, std::ios::end);
+    size_t file_size = data_file.tellg();
+    size_t num_el = file_size / sizeof(double);
+
+    data.resize(num_el);
+
+    data_file.seekg(0, std::ios::beg);
+    for (size_t i = 0; i < num_el; ++i)
+    {
+        data_file.read(reinterpret_cast<char*>(&data[i]), sizeof(double));
+    }
+
+    data_file.close();
+    return data;
+
+}
+
 void Graph::setParent(Plot* parent)
 {     
     if (m_parent)
@@ -92,7 +129,12 @@ void Graph::setParent(Plot* parent)
 void Graph::plotGraph() {
 
     //if has parent load from file, if not load directly from variable
-    *gp << "plot '" << m_parent->getDirPath()+"\\"+m_graph_name+".epd" << "' binary format='%double' using 1 with lines title 'v0'\n";
+    *gp << "plot '" << m_parent->getDirPath() + "\\" + m_graph_name + ".epd" << "' binary format='%double' using ($0 * " << 1.0/m_sample_frequency << " + " << m_x_min << "):1 with lines title '"<< m_graph_name <<"'\n";
     gp->flush();  // Ensure the command is sent
     std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Optional: Give Gnuplot time to render
+}
+
+void Graph::calculateIntegral()
+{
+
 }
