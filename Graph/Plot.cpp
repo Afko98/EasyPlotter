@@ -3,7 +3,9 @@
 #include <filesystem>
 #include <stdexcept>
 #include <string>
+#include "../UseImGui.h"
 
+bool Plot::m_add_new_graph_button = false;
 //Plot::Plot()
 //{
 //    // Get the current directory where the executable is located
@@ -90,7 +92,7 @@ void Plot::renderGraphList()
     if (ImGui::Button("Add New Graph", ImVec2(150, 36)))
     {
         m_graph_edit_selected = nullptr;
-        UseImGui::renderAddNewGraph();
+        m_add_new_graph_button = true;
     }
 
     ImGui::EndChild();
@@ -114,6 +116,7 @@ void Plot::renderGraphList()
         ImGui::SameLine();
         if (ImGui::Button(("  Edit  ##" + g->getGraphName()).c_str(), ImVec2(102, 25)))
         {
+            m_add_new_graph_button = false;
             m_graph_edit_selected = g;
         }
 
@@ -150,5 +153,10 @@ void Plot::renderGraphList()
     if (m_graph_edit_selected)
     {
         m_graph_edit_selected->renderImGuiEditGraph();
+    }
+
+    else if (m_add_new_graph_button)
+    {
+        UseImGui::renderAddNewGraph(this);
     }
 }

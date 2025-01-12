@@ -11,16 +11,6 @@ private:
     double m_mean_copy;
     double m_standard_deviation_copy;
 
-    char m_graph_name_copy[256] = { 0 };
-    char m_label_x_copy[256] = { 0 };
-    char m_label_y_copy[256] = { 0 };
-
-    double m_sample_freq_copy;
-    double m_x_min_copy;
-    double m_x_max_copy;
-    float m_line_colour_copy[4] = { 0 };
-    int m_line_type_copy;
-
     void overrideOriginalArguments();
 
 public:

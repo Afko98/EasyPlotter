@@ -2,7 +2,10 @@
 #include "exprtk.hpp"
 #include "../gnuplot-iostream.h"
 #include <filesystem>
-#include "../Graph/Plot.h"
+#include "../Plot.h"
+#include "imgui.h"
+#include "imgui_impl_dx9.h"
+#include "imgui_impl_win32.h"
 
 class Plot;
 
@@ -55,6 +58,16 @@ protected:
 	static const char* lineTypes[4];
 
 	bool saveDataToFile();
+
+	char m_graph_name_copy[256] = { 0 };
+	char m_label_x_copy[256] = { 0 };
+	char m_label_y_copy[256] = { 0 };
+
+	double m_sample_freq_copy;
+	double m_x_min_copy;
+	double m_x_max_copy;
+	float m_line_colour_copy[4] = { 0 };
+	int m_line_type_copy;
 
 private:
 	Gnuplot* gp;

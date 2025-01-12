@@ -16,9 +16,6 @@
 #include "imgui_impl_win32.h"
 #include <d3d9.h>
 #include <tchar.h>
-#include "./Graph/GraphTypes/Cosine.h"
-#include "./Graph/GraphTypes/WhiteNoise.h"
-#include "./Graph/GraphTypes/GaussianFunction.h"
 #include "UseImGui.h"
 #include "./Graph/PlotContainer.h"
 
@@ -87,16 +84,6 @@ int main(int, char**)
     //ImGuiIO& io = ImGui::GetIO();
     //io.FontGlobalScale = 1.2f; // Scale all fonts globally (1.5x larger)
 
-    PlotContainer::instance()->addPlot("D:\\tempFolder\\tempFolder\\tempFolder", "plot1");
-    PlotContainer::instance()->addPlot("D:\\tempFolder\\tempFolder1\\tempFolder", "plot2");
-    Plot* p = PlotContainer::instance()->getPlotList().at(0);
-    Plot* p1 = PlotContainer::instance()->getPlotList().at(1);
-
-    float a[4] = { 0.0f,0.0f,0.0f,0.0f };
-    p->addNewGraph(new WhiteNoise(2, 1, "white", 25, 0, 5, a, 0, "x", "y"));
-    p1->addNewGraph(new WhiteNoise(2, 1, "w", 10, 0, 5, a, 0, "x", "y"));
-    p1->addNewGraph(new WhiteNoise(2, 1, "ww", 10, 0, 5, a, 0, "x", "y"));
-    p->addNewGraph(new WhiteNoise(2, 1, "www", 25, 0, 5, a, 0, "x", "y"));
     // Main loop
     bool done = false;
     while (!done)

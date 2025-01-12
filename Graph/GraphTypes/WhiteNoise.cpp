@@ -44,6 +44,8 @@ void WhiteNoise::renderImGuiEditGraph()
     ImGui::Dummy(ImVec2(0, 15));
     ImGui::SetNextItemWidth(250.0f);
     ImGui::Text("  f(x) = N( mean, sd^2 )");
+    ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Mean", &m_mean_copy, 0.1, 10.0);
+    ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Standard deviation", &m_standard_deviation_copy, 0.0, 360.0);
 
     // Handle the title input
     ImGui::Dummy(ImVec2(0, 8));

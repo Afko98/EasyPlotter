@@ -5,9 +5,9 @@
 #include <cstdio>
 #include "../Graph/GraphTypes/Graph.h"
 #include "../gnuplot-iostream.h"
-#include "../UseImGui.h"
 
 class Graph;
+class UseImGui;
 
 class Plot
 {
@@ -16,7 +16,7 @@ class Plot
 	std::string m_dir_path;
 
 	Graph* m_graph_edit_selected;
-
+	static bool m_add_new_graph_button;
 	Gnuplot * gp;
 
 public:

@@ -1,5 +1,6 @@
 ﻿#include "UseImGui.h"
 #include <iostream>
+#include "../Graph/Plot.h"
 
 char UseImGui::m_selected_function[128] = ""; // Initializing the buffer with an empty string
 char UseImGui::m_selected_title[128] = "";
@@ -223,7 +224,7 @@ void UseImGui::renderNewGraphMaker()
 }
 */
 
-void UseImGui::renderAddNewGraph()
+void UseImGui::renderAddNewGraph(Plot* p)
 {
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
@@ -240,7 +241,7 @@ void UseImGui::renderAddNewGraph()
         ImGui::PushStyleColor(ImGuiCol_TabActive, IM_COL32(74, 100, 130, 255));
         if (ImGui::BeginTabItem("  Math function  ")) {
             ImGui::PopStyleColor(3); // Pop the tab colors
-            renderAddMathFunction();
+            renderAddMathFunction(p);
             ImGui::EndTabItem();
         }
         else {
@@ -253,7 +254,7 @@ void UseImGui::renderAddNewGraph()
         ImGui::PushStyleColor(ImGuiCol_TabActive, IM_COL32(74, 100, 130, 255));
         if (ImGui::BeginTabItem("  Generator  ")) {
             ImGui::PopStyleColor(3);
-            renderAddGenerated();
+            renderAddGenerated(p);
             ImGui::EndTabItem();
         }
         else {
@@ -266,7 +267,7 @@ void UseImGui::renderAddNewGraph()
         ImGui::PushStyleColor(ImGuiCol_TabActive, IM_COL32(74, 100, 130, 255));
         if (ImGui::BeginTabItem("  From file  ")) {
             ImGui::PopStyleColor(3);
-            renderAddFromFile();
+            renderAddFromFile(p);
             ImGui::EndTabItem();
         }
         else {
@@ -278,7 +279,7 @@ void UseImGui::renderAddNewGraph()
         ImGui::PushStyleColor(ImGuiCol_TabActive, IM_COL32(74, 100, 130, 255));
         if (ImGui::BeginTabItem("  From file (EP format)  ")) {
             ImGui::PopStyleColor(3);
-            renderAddFromFileEPFormat();
+            renderAddFromFileEPFormat(p);
             ImGui::EndTabItem();
         }
         else {
@@ -291,7 +292,7 @@ void UseImGui::renderAddNewGraph()
     ImGui::EndChild();
 }
 
-void UseImGui::renderAddMathFunction()
+void UseImGui::renderAddMathFunction(Plot* p)
 {
     ImGui::Dummy(ImVec2(0, 15));
     ImGui::SetNextItemWidth(250.0f);
@@ -343,11 +344,11 @@ void UseImGui::renderAddMathFunction()
     ImGui::SetCursorPos(ImVec2(windowSize.x - 640, windowSize.y - 50));
     if (ImGui::Button("  ADD GRAPH  "))
     {
-        // Handle graph addition
+        
     }
 }
 
-void UseImGui::renderAddGenerated()
+void UseImGui::renderAddGenerated(Plot* p)
 {
     ImGui::Dummy(ImVec2(0, 15));
     ImGui::SetNextItemWidth(250.0f);
@@ -359,13 +360,13 @@ void UseImGui::renderAddGenerated()
         "Triangular Function",  //4
         "Triangular Wave",      //5
         "Sawtooth Wave",        //6
-        "Impulse Signal",       //9
-        "Pulse Train",          //10
-        "Exponential Function", //12
-        "Gaussian Function",    //13
-        "Chirp Signal",         //14
-        "White Noise",          //15
-        "Uniform Noise"         //16
+        "Impulse Signal",       //7
+        "Pulse Train",          //8
+        "Exponential Function", //9
+        "Gaussian Function",    //10
+        "Chirp Signal",         //11
+        "White Noise",          //12
+        "Uniform Noise"         //13
         // TODO: Add modulations...
     };
 
@@ -411,22 +412,22 @@ void UseImGui::renderAddGenerated()
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);
         break;
-    case 9: 
+    case 7: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Impulse Position", &m_new_generator_step_time, -10.0f, 10.0f);
         break;
 
-    case 10:
+    case 8:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency/step (Hz)", &m_new_generator_frequency, 0.1, 10.0);
         break;
 
-    case 12:
+    case 9:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  t (e^xt)", &m_new_generator_amplitude, 0.1, 2.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Shift", &m_new_generator_phase_shift, 0.1, 2.0);
         break;
 
-    case 13:
+    case 10:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Mean", &m_new_generator_mean, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Standard deviation", &m_new_generator_standard_deviation, 0.0, 360.0);
         if (m_new_generator_standard_deviation < 0.0) {
@@ -434,19 +435,19 @@ void UseImGui::renderAddGenerated()
         }
         break;
 
-    case 14: 
+    case 11: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Initial Frequency (Hz)", &m_new_generator_initial_frequency, 0.1, 10.0); 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Final Frequency (Hz)", &m_new_generator_end_frequency, 0.1, 10.0);     
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);      
         break;
 
-    case 15: 
+    case 12: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Mean", &m_new_generator_mean, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Standard deviation", &m_new_generator_standard_deviation, 0.0, 360.0);
         break;
 
-    case 16: 
+    case 13: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Minimum Value", &m_new_generator_min_amplitude, -10.0, 10.0);       
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Maximum Value", &m_new_generator_max_amplitude, -10.0, 10.0);
         break;
@@ -500,16 +501,61 @@ void UseImGui::renderAddGenerated()
     ImGui::SetCursorPos(ImVec2(windowSize.x - 640, windowSize.y - 50));
     if (ImGui::Button("  ADD GRAPH  "))
     {
-        // Handle graph addition
+        switch (m_new_generated_signal) {
+        case 0:
+            p->addNewGraph(new Constant(m_new_generator_amplitude, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 1:
+            p->addNewGraph(new Cosine(m_new_generator_amplitude, m_new_generator_frequency, m_new_generator_phase_shift, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 2:
+            p->addNewGraph(new RectangularFunction(m_new_generator_amplitude, m_new_generator_width, m_new_generator_phase_shift, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 3:
+            p->addNewGraph(new SquareWawe(m_new_generator_amplitude, m_new_generator_frequency, m_new_generator_phase_shift, m_new_generator_duty_cycle, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 4:
+            p->addNewGraph(new TriangularFunction(m_new_generator_amplitude, m_new_generator_width, m_new_generator_phase_shift, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 5:
+            p->addNewGraph(new TriangularWave(m_new_generator_amplitude, m_new_generator_frequency, m_new_generator_phase_shift, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 6:
+            p->addNewGraph(new SawtoothWave(m_new_generator_amplitude, m_new_generator_frequency, m_new_generator_phase_shift, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 7:
+            p->addNewGraph(new ImpulseSignal(m_new_generator_amplitude, m_new_generator_step_time, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 8:
+            p->addNewGraph(new PulseTrain(m_new_generator_amplitude, m_new_generator_frequency, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 9:
+            p->addNewGraph(new ExponentialFunction(m_new_generator_amplitude, m_new_generator_phase_shift, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 10:
+            p->addNewGraph(new GaussianFunction(m_new_generator_mean, m_new_generator_standard_deviation, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 11:
+            p->addNewGraph(new ChirpSignal(m_new_generator_amplitude, m_new_generator_initial_frequency, m_new_generator_end_frequency, m_new_generator_phase_shift, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 12:
+            p->addNewGraph(new WhiteNoise(m_new_generator_mean, m_new_generator_standard_deviation, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        case 13:
+            p->addNewGraph(new UniformNoise(m_new_generator_min_amplitude, m_new_generator_max_amplitude, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
+            break;
+        default:
+            break;
+        }
     }
 }
 
-void UseImGui::renderAddFromFile()
+void UseImGui::renderAddFromFile(Plot* p)
 {
     ImGui::Button("ADD GRAPH");
 }
 
-void UseImGui::renderAddFromFileEPFormat()
+void UseImGui::renderAddFromFileEPFormat(Plot* p)
 {
     ImGui::Button("ADD GRAPH");
 }

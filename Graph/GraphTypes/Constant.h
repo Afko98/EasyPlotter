@@ -1,10 +1,17 @@
-#pragma once
-#include "Graph.h"
+#ifndef CONSTANT_H
+#define CONSTANT_H
+
+// Class definition
+#include "./Graph.h"
+
 
 class Constant : public Graph
 {
 private:
     double m_amplitude;
+    double m_amplitude_copy;
+
+    void overrideOriginalArguments();
 
 public:
 
@@ -13,4 +20,7 @@ public:
 
     void calculateGraphData() override;
     void renderImGuiEditGraph() override;
+    void copyArgumentsForGui() override;
 };
+
+#endif // CONSTANT_H
