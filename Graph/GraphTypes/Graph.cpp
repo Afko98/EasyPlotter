@@ -129,7 +129,13 @@ void Graph::setParent(Plot* parent)
 void Graph::plotGraph() {
 
     //if has parent load from file, if not load directly from variable
-    *gp << "plot '" << m_parent->getDirPath() + "\\" + m_graph_name + ".epd" << "' binary format='%double' using ($0 * " << 1.0/m_sample_frequency << " + " << m_x_min << "):1 with lines title '"<< m_graph_name <<"'\n";
+    *gp << "set autoscale yfix\n";
+*gp << "set offset 0, 0, 0.1, 0.1\n"; 
+    *gp << "plot '" << m_parent->getDirPath() + "\\" + m_graph_name + ".epd"
+        << "' binary format='%double' using ($0 * " << 1.0 / m_sample_frequency << " + " << m_x_min
+        << "):1 with lines title '" << m_graph_name << "'\n";
+
+    //*gp << "plot '" << m_parent->getDirPath() + "\\" + m_graph_name + ".epd" << "' binary format='%double' using ($0 * " << 1.0/m_sample_frequency << " + " << m_x_min << "):1 with lines title '"<< m_graph_name <<"'\n";
     gp->flush();  // Ensure the command is sent
     std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Optional: Give Gnuplot time to render
 }

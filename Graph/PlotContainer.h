@@ -18,7 +18,7 @@ class PlotContainer
 public:
 	static PlotContainer* instance();
 
-	const std::vector<Plot*> getPlotList() const { return m_plot_list; }
+	const std::vector<Plot*> &getPlotList() const { return m_plot_list; }
 
 	void addPlot(std::string dir_path, std::string name) { m_plot_list.push_back(new Plot(dir_path, name)); }; // do check first if Plot was created...
 	void removePlot(Plot* p);

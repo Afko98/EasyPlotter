@@ -135,6 +135,7 @@ void Plot::renderGraphList()
             ImGui::Text("Delete graph/file?");
             if (ImGui::Button("Yes", ImVec2(102, 25)))
             {
+                m_graph_edit_selected = nullptr;
                 removeGraph(g);
                 ImGui::CloseCurrentPopup();
             }

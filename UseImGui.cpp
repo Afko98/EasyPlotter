@@ -345,6 +345,8 @@ void UseImGui::renderAddMathFunction(Plot* p)
     if (ImGui::Button("  ADD GRAPH  "))
     {
         
+
+        p->closeAddNewGraphWindow();
     }
 }
 
@@ -496,11 +498,24 @@ void UseImGui::renderAddGenerated(Plot* p)
     ImGui::Separator();
     ImGui::Dummy(ImVec2(0, 8));
 
+    bool invalid_input = false;
+    if (strlen(m_new_title) == 0 || std::find_if(p->getGraphList().begin(), p->getGraphList().end(), [](Graph* g) { return g->getGraphName() == m_new_title; }) != p->getGraphList().end())
+    {
+        invalid_input = true;
+        if (strlen(m_new_title) == 0)
+            ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Invalid name input!");
+        else
+            ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Graph already added!");
+    }
+
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
     ImGui::SetCursorPos(ImVec2(windowSize.x - 640, windowSize.y - 50));
     if (ImGui::Button("  ADD GRAPH  "))
     {
+        if (invalid_input)
+            return;
+
         switch (m_new_generated_signal) {
         case 0:
             p->addNewGraph(new Constant(m_new_generator_amplitude, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
@@ -547,17 +562,22 @@ void UseImGui::renderAddGenerated(Plot* p)
         default:
             break;
         }
+        p->closeAddNewGraphWindow();
     }
 }
 
 void UseImGui::renderAddFromFile(Plot* p)
 {
     ImGui::Button("ADD GRAPH");
+
+    p->closeAddNewGraphWindow();
 }
 
 void UseImGui::renderAddFromFileEPFormat(Plot* p)
 {
     ImGui::Button("ADD GRAPH");
+
+    p->closeAddNewGraphWindow();
 }
 
 void UseImGui::Render() {

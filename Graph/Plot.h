@@ -24,10 +24,12 @@ public:
 	explicit Plot(std::string dir_path, std::string name);
 	~Plot();
 
-	const std::vector<Graph*> getGraphList() const { return m_graph_list; }
+	const std::vector<Graph*> &getGraphList() const { return m_graph_list; }
 
 	void addNewGraph(Graph* g);
 	void removeGraph(Graph *g);
+
+	void closeAddNewGraphWindow() { m_add_new_graph_button = false; }
 
 	std::string getName() { return m_name; };
 	std::string getDirPath() { return m_dir_path; }

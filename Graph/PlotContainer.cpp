@@ -70,9 +70,24 @@ void PlotContainer::renderPlotList()
 
         ImGui::Dummy(ImVec2(0,10));
 
+        bool invalid_input = false;
+        if (!std::filesystem::exists(dir) || strlen(name) == 0 || strlen(dir) == 0 || std::find_if(m_plot_list.begin(), m_plot_list.end(), [](Plot* p) { return p->getDirPath() == dir || p->getName() == name; }) != m_plot_list.end())
+        {
+            invalid_input = true;
+            if (!std::filesystem::exists(dir))
+                ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Directory doesm't exist! select 'Select Directory' to create one.");
+            else if (strlen(name) == 0 || strlen(dir) == 0)
+                ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Invalid name input!");
+            else
+                ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Plot already added!");
+        }
+
         if (ImGui::Button("Add", ImVec2(70, 26)))
         {
-            PlotContainer::instance()->addPlot(dir, name);
+            if (invalid_input)
+                return;
+
+            addPlot(dir, name);
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
