@@ -4,6 +4,7 @@
 GaussianFunction::GaussianFunction(double mean, double standard_deviation, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
     : Graph(GraphType::White_Noise, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_mean(mean), m_standard_deviation(standard_deviation)
 {
+    copyArgumentsForGui();
     calculateGraphData();
 }
 

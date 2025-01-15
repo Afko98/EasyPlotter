@@ -1,38 +1,60 @@
-#include "Constant.h"
+#include "MathFunction.h"
+#include <random>
 
-Constant::Constant(double amplitude, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
-    : Graph(GraphType::Constant, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_amplitude(amplitude)
+MathFunction::MathFunction(std::string function, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
+    : Graph(GraphType::Math_Function, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_function(function)
 {
     copyArgumentsForGui();
     calculateGraphData();
 }
 
-Constant::~Constant()
+MathFunction::~MathFunction()
 {
 
 }
 
-void Constant::calculateGraphData() 
+void MathFunction::calculateGraphData()
 {
-    m_graph_data = std::vector<double>(static_cast<size_t>((m_x_max - m_x_min) * m_sample_frequency + 1), m_amplitude);
+    m_graph_data.clear();
+    m_graph_data.reserve(static_cast<size_t>((m_x_max - m_x_min) * m_sample_frequency + 1) * 1.05);
+
+    typedef exprtk::symbol_table<double> symbol_table_t;
+    typedef exprtk::expression<double> expression_t;
+    typedef exprtk::parser<double> parser_t;
+
+    double x = 0;
+    symbol_table_t symbol_table;
+    symbol_table.add_variable("x", x);
+    symbol_table.add_constants();  // Includes math constants like pi and e
+
+    expression_t expression;
+    expression.register_symbol_table(symbol_table);
+
+    parser_t parser;
+
+    for (x = m_x_min; x <= m_x_max; x+= 1.0/m_sample_frequency) 
+    {
+        m_graph_data.push_back(expression.value());
+    }
+
     saveDataToFile();
 }
 
-void Constant::renderImGuiEditGraph()
+
+void MathFunction::renderImGuiEditGraph()
 {
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
     // Set position for the right-aligned box
     ImGui::SetCursorPos(ImVec2(499, 1)); // Adjust offset
-    ImGui::BeginChild(("Constant##list" + m_graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
-    ImGui::Text(("Selected graph: " + m_graph_name).c_str());
+    ImGui::BeginChild(("MathFunction##list" + m_graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
+    ImGui::Text(("  Selected graph: " + m_graph_name).c_str());
     ImGui::Dummy(ImVec2(10, 10));
 
     ImGui::Dummy(ImVec2(0, 15));
     ImGui::SetNextItemWidth(250.0f);
-    ImGui::Text("  f(x) = C");
-    ImGui::SetNextItemWidth(250.0f);
-    ImGui::InputDouble("  Amplitude", &m_amplitude_copy, 0.1, 2.0);
+    ImGui::Text(("  f(x) = " + m_function).c_str());
+    ImGui::SetNextItemWidth(250.0f); ImGui::InputText("  Function", m_function_copy, sizeof(m_function_copy));
 
     // Handle the title input
     ImGui::Dummy(ImVec2(0, 8));
@@ -78,19 +100,38 @@ void Constant::renderImGuiEditGraph()
     bool valid_input = true;
     std::string error_message;
 
-    if (m_x_max_copy < m_x_min_copy)
+    typedef exprtk::symbol_table<double> symbol_table_t;
+    typedef exprtk::expression<double> expression_t;
+    typedef exprtk::parser<double> parser_t;
+
+    double x = 0;
+    symbol_table_t symbol_table;
+    symbol_table.add_variable("x", x);
+    symbol_table.add_constants();  // Includes math constants like pi and e
+
+    expression_t expression;
+    expression.register_symbol_table(symbol_table);
+
+    parser_t parser;
+
+    if (!parser.compile(m_function, expression)) {
+        valid_input = false;
+        error_message = "Error: Function expression invalid!";
+    }
+
+    if (m_x_max_copy < m_x_min_copy) 
     {
         valid_input = false;
         error_message = "Error: x_max cannot be less than x_min.";
     }
 
-    if (m_sample_freq_copy <= 0)
+    if (m_sample_freq_copy <= 0) 
     {
         valid_input = false;
         error_message = "Error: Sample frequency must be greater than 0.";
     }
 
-    if (strlen(m_graph_name_copy) == 0)
+    if (strlen(m_graph_name_copy) == 0) 
     {
         valid_input = false;
         error_message = "Error: Graph name cannot be empty.";
@@ -109,19 +150,19 @@ void Constant::renderImGuiEditGraph()
             overrideOriginalArguments();
             calculateGraphData();
             copyArgumentsForGui();
-        }
+        } 
     }
 
     ImGui::EndChild();
 }
 
-void Constant::copyArgumentsForGui()
+void MathFunction::copyArgumentsForGui()
 {
     strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_graph_name.c_str(), _TRUNCATE);
     strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_x_label.c_str(), _TRUNCATE);
     strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_y_label.c_str(), _TRUNCATE);
 
-    m_amplitude_copy = m_amplitude;
+    strncpy_s(m_function_copy, sizeof(m_function_copy), m_function.c_str(), _TRUNCATE);
 
     m_sample_freq_copy = m_sample_frequency;
     m_x_min_copy = m_x_min;
@@ -133,13 +174,13 @@ void Constant::copyArgumentsForGui()
     m_line_type_copy = m_line_type;
 }
 
-void Constant::overrideOriginalArguments()
+void MathFunction::overrideOriginalArguments()
 {
     m_graph_name = m_graph_name_copy;
     m_x_label = m_label_x_copy;
     m_y_label = m_label_y_copy;
 
-    m_amplitude = m_amplitude_copy;
+    m_function = m_function_copy;
 
     m_sample_frequency = m_sample_freq_copy;
     m_x_min = m_x_min_copy;
@@ -150,5 +191,3 @@ void Constant::overrideOriginalArguments()
     }
     m_line_type = m_line_type_copy;
 }
-
-

@@ -21,7 +21,7 @@ double UseImGui::m_new_x_max = 20.0;
 
 double UseImGui::m_new_generator_amplitude = 1.0;          
 double UseImGui::m_new_generator_frequency = 1.0;          
-double UseImGui::m_new_generator_phase_shift = 0.0;        
+float UseImGui::m_new_generator_phase_shift = 0.0f;        
 double UseImGui::m_new_generator_width = 1.0;              
 float UseImGui::m_new_generator_duty_cycle = 50.0f;        
 double UseImGui::m_new_generator_step_time = 0.0;          
@@ -339,13 +339,67 @@ void UseImGui::renderAddMathFunction(Plot* p)
     ImGui::Separator();
     ImGui::Dummy(ImVec2(0, 8));
 
+    bool valid_input = true;
+    std::string error_message;
+    typedef exprtk::symbol_table<double> symbol_table_t;
+    typedef exprtk::expression<double> expression_t;
+    typedef exprtk::parser<double> parser_t;
+
+    double x = 0;
+    symbol_table_t symbol_table;
+    symbol_table.add_variable("x", x);
+    symbol_table.add_constants();  // Includes math constants like pi and e
+
+    expression_t expression;
+    expression.register_symbol_table(symbol_table);
+
+    parser_t parser;
+
+    if (!parser.compile(m_new_function, expression)) 
+    {
+        valid_input = false;
+        error_message = "Error: Function expression invalid!";
+    }
+
+    if (m_new_x_min > m_new_x_max)
+    {
+        valid_input = false;
+        error_message = "Error: x_max cannot be less than x_min.";
+    }
+
+    if (m_new_freq <= 0)
+    {
+        valid_input = false;
+        error_message = "Error: Sample frequency must be greater than 0.";
+    }
+
+    if (strlen(m_new_title) == 0)
+    {
+        valid_input = false;
+        error_message = "Error: Graph name cannot be empty.";
+    }
+
+    if (std::find_if(p->getGraphList().begin(), p->getGraphList().end(), [](Graph* g) { return g->getGraphName() == m_new_title; }) != p->getGraphList().end())
+    {
+        valid_input = false;
+        error_message = "Graph already added!";
+    }
+
+    if (!valid_input)
+    {
+        ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), error_message.c_str());
+        return;
+    }
+
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
 
     ImGui::SetCursorPos(ImVec2(windowSize.x - 640, windowSize.y - 50));
     if (ImGui::Button("  ADD GRAPH  "))
     {
-        
+        if (!valid_input)
+            return;
 
+        p->addNewGraph(new MathFunction(m_new_function, m_new_title, m_new_freq, m_new_x_min, m_new_x_max, m_new_color, m_new_linetype, m_new_label_x, m_new_label_y));
         p->closeAddNewGraphWindow();
     }
 }
@@ -378,41 +432,56 @@ void UseImGui::renderAddGenerated(Plot* p)
     ImGui::Dummy(ImVec2(0, 8));
     ImGui::Separator();
     ImGui::Dummy(ImVec2(0, 8));
+
+    bool valid_input = true;
+    std::string error_message;
+
     switch (m_new_generated_signal) {
     case 0: 
-        ImGui::SetNextItemWidth(250.0f);
-        ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 2.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 2.0);
         break;
     case 1: 
-        ImGui::SetNextItemWidth(250.0f);
-        ImGui::InputDouble("  Frequency (Hz)", &m_new_generator_frequency, 0.1, 10.0);
-        ImGui::SetNextItemWidth(250.0f);
-        ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
-        ImGui::SetNextItemWidth(250.0f);
-        ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency (Hz)", &m_new_generator_frequency, 0.1, 10.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::DragFloat("  Phase Shift (degrees)", &m_new_generator_phase_shift, 1.0f, -180.0f, 180.0f);
+        if (m_new_generator_frequency == 0)
+        {
+            valid_input = false;
+            error_message = "Error: Frequency can't be zero!";
+        }
         break;
     case 2: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  width", &m_new_generator_width, 0.1, 2.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Shift", &m_new_generator_phase_shift, 0.0, 2.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::DragFloat("  Phase Shift (degrees)", &m_new_generator_phase_shift, 1.0f, -180.0f, 180.0f);
         break;
     case 3: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency (Hz)", &m_new_generator_frequency, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::DragFloat("  Phase Shift (degrees)", &m_new_generator_phase_shift, 1.0f, -180.0f, 180.0f);
         ImGui::SetNextItemWidth(250.0f); ImGui::SliderFloat("  Duty cycle", &m_new_generator_duty_cycle, 0.0f, 100.0f);
+        if (m_new_generator_frequency == 0)
+        {
+            valid_input = false;
+            error_message = "Error: Frequency can't be zero!";
+        }
         break;
     case 4:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  width", &m_new_generator_width, 0.1, 2.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Shift", &m_new_generator_phase_shift, 0.0, 2.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::DragFloat("  Phase Shift (degrees)", &m_new_generator_phase_shift, 1.0f, -180.0f, 180.0f);
         break;
 
     case 5:  
     case 6:   
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency (Hz)", &m_new_generator_frequency, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::DragFloat("  Phase Shift (degrees)", &m_new_generator_phase_shift, 1.0f, -180.0f, 180.0f);
+        if (m_new_generator_frequency == 0)
+        {
+            valid_input = false;
+            error_message = "Error: Frequency can't be zero!";
+        }
         break;
     case 7: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
@@ -422,18 +491,25 @@ void UseImGui::renderAddGenerated(Plot* p)
     case 8:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Frequency/step (Hz)", &m_new_generator_frequency, 0.1, 10.0);
+        if (m_new_generator_frequency == 0)
+        {
+            valid_input = false;
+            error_message = "Error: Frequency can't be zero!";
+        }
         break;
 
     case 9:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  t (e^xt)", &m_new_generator_amplitude, 0.1, 2.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Shift", &m_new_generator_phase_shift, 0.1, 2.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputFloat("  Shift", &m_new_generator_phase_shift, 0.1, 2.0);
         break;
 
     case 10:
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Mean", &m_new_generator_mean, 0.1, 10.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Standard deviation", &m_new_generator_standard_deviation, 0.0, 360.0);
-        if (m_new_generator_standard_deviation < 0.0) {
-            m_new_generator_standard_deviation = 0.0;
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Standard deviation", &m_new_generator_standard_deviation, 0.1, 1);
+        if (m_new_generator_standard_deviation < 0.0)
+        {
+            valid_input = false;
+            error_message = "Error: Standard deviation cant be less that 0";
         }
         break;
 
@@ -441,17 +517,27 @@ void UseImGui::renderAddGenerated(Plot* p)
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Amplitude", &m_new_generator_amplitude, 0.1, 10.0);
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Initial Frequency (Hz)", &m_new_generator_initial_frequency, 0.1, 10.0); 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Final Frequency (Hz)", &m_new_generator_end_frequency, 0.1, 10.0);     
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Phase Shift (degrees)", &m_new_generator_phase_shift, 0.0, 360.0);      
+        ImGui::SetNextItemWidth(250.0f); ImGui::DragFloat("  Phase Shift (degrees)", &m_new_generator_phase_shift, 1.0f, -180.0f, 180.0f);
         break;
 
     case 12: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Mean", &m_new_generator_mean, 0.1, 10.0);
-        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Standard deviation", &m_new_generator_standard_deviation, 0.0, 360.0);
+        ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Standard deviation", &m_new_generator_standard_deviation, 0.1, 1);
+        if (m_new_generator_standard_deviation < 0.0)
+        {
+            valid_input = false;
+            error_message = "Error: Standard deviation cant be less that 0";
+        }
         break;
 
     case 13: 
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Minimum Value", &m_new_generator_min_amplitude, -10.0, 10.0);       
         ImGui::SetNextItemWidth(250.0f); ImGui::InputDouble("  Maximum Value", &m_new_generator_max_amplitude, -10.0, 10.0);
+        if (m_new_generator_min_amplitude > m_new_generator_max_amplitude)
+        {
+            valid_input = false;
+            error_message = "Error: Minimum amplitude is bigger than maximum value!";
+        }
         break;
     default:
         break;
@@ -498,14 +584,34 @@ void UseImGui::renderAddGenerated(Plot* p)
     ImGui::Separator();
     ImGui::Dummy(ImVec2(0, 8));
 
-    bool invalid_input = false;
-    if (strlen(m_new_title) == 0 || std::find_if(p->getGraphList().begin(), p->getGraphList().end(), [](Graph* g) { return g->getGraphName() == m_new_title; }) != p->getGraphList().end())
+    if (m_new_x_min > m_new_x_max)
     {
-        invalid_input = true;
-        if (strlen(m_new_title) == 0)
-            ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Invalid name input!");
-        else
-            ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Graph already added!");
+        valid_input = false;
+        error_message = "Error: x_max cannot be less than x_min.";
+    }
+
+    if (m_new_freq <= 0)
+    {
+        valid_input = false;
+        error_message = "Error: Sample frequency must be greater than 0.";
+    }
+
+    if (strlen(m_new_title) == 0)
+    {
+        valid_input = false;
+        error_message = "Error: Graph name cannot be empty.";
+    }
+    
+    if (std::find_if(p->getGraphList().begin(), p->getGraphList().end(), [](Graph* g) { return g->getGraphName() == m_new_title; }) != p->getGraphList().end())
+    {
+        valid_input = false;
+        error_message = "Graph already added!";
+    }
+
+    if (!valid_input)
+    {
+        ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), error_message.c_str());
+        return;
     }
 
     ImVec2 windowSize = ImGui::GetIO().DisplaySize;
@@ -513,7 +619,7 @@ void UseImGui::renderAddGenerated(Plot* p)
     ImGui::SetCursorPos(ImVec2(windowSize.x - 640, windowSize.y - 50));
     if (ImGui::Button("  ADD GRAPH  "))
     {
-        if (invalid_input)
+        if (!valid_input)
             return;
 
         switch (m_new_generated_signal) {

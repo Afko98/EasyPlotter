@@ -2,6 +2,7 @@
 ChirpSignal::ChirpSignal(double amplitude, double inital_f, double final_f, double phase_shift, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
     : Graph(GraphType::Chirp_Signal, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_amplitude(amplitude), m_phase_shift(phase_shift), m_inital_frequency(inital_f), m_final_frequency(final_f)
 {
+    copyArgumentsForGui();
     calculateGraphData();
 }
 

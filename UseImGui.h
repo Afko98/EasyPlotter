@@ -19,6 +19,7 @@
 #include "../Graph/GraphTypes/TriangularWave.h"
 #include "../Graph/GraphTypes/UniformNoise.h"
 #include "../Graph/GraphTypes/WhiteNoise.h"
+#include "../Graph/GraphTypes/MathFunction.h"
 
 class Plot;
 
@@ -40,7 +41,7 @@ class UseImGui {
 
 	static double m_new_generator_amplitude;
 	static double m_new_generator_frequency;
-	static double m_new_generator_phase_shift;
+	static float m_new_generator_phase_shift;
 	static double m_new_generator_width;
 	static float m_new_generator_duty_cycle;
 	static double m_new_generator_step_time;

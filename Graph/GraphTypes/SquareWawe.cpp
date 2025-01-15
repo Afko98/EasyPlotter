@@ -4,6 +4,7 @@ SquareWawe::SquareWawe(double amplitude, double frequency, double phase_shift, f
     : Graph(GraphType::Square_Wave, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_amplitude(amplitude), m_frequency(frequency), m_duty_cycle(duty_cycle)
 {
     m_phase_shift = fmod(phase_shift, 180.0);
+    copyArgumentsForGui();
     calculateGraphData();
 }
 

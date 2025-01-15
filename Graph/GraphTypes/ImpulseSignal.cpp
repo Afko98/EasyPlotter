@@ -2,6 +2,7 @@
 ImpulseSignal::ImpulseSignal(double amplitude, double position, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
     : Graph(GraphType::Impulse_Signal, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_amplitude(amplitude), m_impulse_position(position)
 {
+    copyArgumentsForGui();
     calculateGraphData();
 }
 
