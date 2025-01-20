@@ -17,6 +17,7 @@ class Plot
 
 	Graph* m_graph_edit_selected;
 	static bool m_add_new_graph_button;
+	Graph* m_graph_calculate_selected;
 	Gnuplot * gp;
 
 public:

@@ -9,7 +9,7 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#include "exprtk.hpp"
+#include "/exprtk/exprtk.hpp"
 #include <iostream>
 #include "imgui.h"
 #include "imgui_impl_dx9.h"

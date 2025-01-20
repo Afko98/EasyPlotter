@@ -48,6 +48,7 @@ Plot::Plot(std::string dir_path, std::string name) : m_name(name), m_dir_path(di
         //dir already exists, check files
     }
     m_graph_edit_selected = nullptr;
+    m_graph_calculate_selected = nullptr;
 }
 
 Plot::~Plot()
@@ -118,6 +119,7 @@ void Plot::renderGraphList()
         {
             m_add_new_graph_button = false;
             m_graph_edit_selected = g;
+            m_graph_calculate_selected = nullptr;
         }
 
         if (ImGui::Button(("  Remove  ##" + g->getGraphName()).c_str(), ImVec2(102, 25)))
@@ -127,7 +129,9 @@ void Plot::renderGraphList()
         ImGui::SameLine();
         if (ImGui::Button("Calculate", ImVec2(102, 25)))
         {
-            
+            m_graph_calculate_selected = g;
+            m_add_new_graph_button = false;
+            m_graph_edit_selected = nullptr;
         }
 
         if (ImGui::BeginPopup("FullTextPopup"))
@@ -136,6 +140,7 @@ void Plot::renderGraphList()
             if (ImGui::Button("Yes", ImVec2(102, 25)))
             {
                 m_graph_edit_selected = nullptr;
+                m_graph_calculate_selected = nullptr;
                 removeGraph(g);
                 ImGui::CloseCurrentPopup();
             }
@@ -159,5 +164,9 @@ void Plot::renderGraphList()
     else if (m_add_new_graph_button)
     {
         UseImGui::renderAddNewGraph(this);
+    }
+    else if (m_graph_calculate_selected)
+    {
+        m_graph_calculate_selected->renderCalculateGraph();
     }
 }

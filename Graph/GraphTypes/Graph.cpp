@@ -142,5 +142,17 @@ void Graph::plotGraph() {
 
 void Graph::calculateIntegral()
 {
+    
+}
 
+void Graph::renderCalculateGraph()
+{
+    ImVec2 windowSize = ImGui::GetIO().DisplaySize;
+
+    // Set position for the right-aligned box
+    ImGui::SetCursorPos(ImVec2(499, 1)); // Adjust offset
+    ImGui::BeginChild("Calculate new graph", ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
+    ImGui::Text("  Calculate some functions:");
+    
+    ImGui::EndChild();
 }

@@ -108,6 +108,8 @@ public:
 	virtual void renderImGuiEditGraph() = 0;
 	virtual void copyArgumentsForGui() = 0;
 
+	void renderCalculateGraph();
+
 	void calculateIntegral();
 
 	//	add friend functions for calculating operations with 2 graphs;
