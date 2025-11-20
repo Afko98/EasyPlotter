@@ -36,25 +36,34 @@ enum class GraphType {
 static const double PI = 3.141592653589793238463;
 static const double TWO_PI = 2 * PI;
 
-enum class LineType {
+enum class LineType 
+{
 	Solid, 
 	Dashed, 
 	Dotted, 
 	DashDot
 };
 
+struct GraphArg
+{
+	std::string _graph_name = "";  
+	std::string _x_label = "";     
+	std::string _y_label = "";     
+	GraphType _graph_type = GraphType::Calculated_Function;  
+	double _sample_frequency = 0.0; 
+	double _x_min = 0.0;          
+	double _x_max = 10.0;         
+	float _line_colour[4] = { 0.0f, 0.0f, 0.0f, 1.0f };  
+	int _line_type = 0;
+};
+
 class Graph
 {
 protected:
-	std::string m_graph_name, m_x_label, m_y_label;
-	std::vector<double> m_graph_data;
-	GraphType m_graph_type;
-	double m_sample_frequency;
-	double m_x_min, m_x_max;
+	GraphArg m_base_arg;
 	Plot* m_parent;
-
-	float m_line_colour[4];
-	int m_line_type;
+	std::vector<double> m_graph_data;
+	
 	static const char* lineTypes[4];
 
 	bool saveDataToFile();
@@ -76,30 +85,30 @@ public:
 	Graph(GraphType graph_type, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x = "", std::string label_y = "");
 	virtual ~Graph() = 0;
 
-	std::string getGraphName() { return m_graph_name; }
-	void setGraphName(std::string name) { m_graph_name = name; }
+	std::string getGraphName() { return m_base_arg._graph_name; }
+	void setGraphName(std::string name) { m_base_arg._graph_name = name; }
 
-	std::string getXLabel() { return m_x_label; }
-	void setXLabel(std::string x_label) { m_x_label = x_label; }
+	std::string getXLabel() { return m_base_arg._x_label; }
+	void setXLabel(std::string x_label) { m_base_arg._x_label = x_label; }
 
-	std::string getYLabel() { return m_y_label; }
-	void setYLabel(std::string y_label) { m_y_label = y_label; }
+	std::string getYLabel() { return m_base_arg.m_base_arg._y_label; }
+	void setYLabel(std::string y_label) { m_base_arg.m_base_arg._y_label = y_label; }
 
-	double getSamleFrequency() { return m_sample_frequency; }
+	double getSamleFrequency() { return m_base_arg._sample_frequency; }
 	void setSampleFrequency(double frequency);
 
-	double getXMin() { return m_x_min; }
+	double getXMin() { return m_base_arg._x_min; }
 	void setXMin(double x_min);
 
-	double getXMax() { return m_x_max; }
+	double getXMax() { return m_base_arg._x_max; }
 	void setXMax(double x_max);
 
 	int getGraphSize() { return m_graph_data.size(); }
 
 	std::vector<double> getGraphData();
 
-	GraphType getGraphType() { return m_graph_type; }
-	void setGraphType(GraphType graph_type) { m_graph_type = graph_type; }
+	GraphType getGraphType() { return m_base_arg._graph_type; }
+	void setGraphType(GraphType graph_type) { m_base_arg._graph_type = graph_type; }
 
 	void setParent(Plot* parent);
 

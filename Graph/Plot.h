@@ -39,7 +39,7 @@ public:
 
 	void linePlot()
 	{
-		//*gp << "plot '-' using ($0 * " << 1.0 / m_sample_frequency << " + " << m_x_min << "):1 with lines title 'v0'\n";
+		//*gp << "plot '-' using ($0 * " << 1.0 / m_base_arg._sample_frequency << " + " << m_base_arg._x_min << "):1 with lines title 'v0'\n";
 		//
 		//gp->send(m_graph_data);
 	}

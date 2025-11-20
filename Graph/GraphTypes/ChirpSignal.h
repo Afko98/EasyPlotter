@@ -1,12 +1,16 @@
 #pragma once
 #include "Graph.h"
+struct ChirpArg {
+    double _inital_frequency;
+    double _final_frequency;
+    double _phase_shift;
+    double _amplitude;
+};
+
 class ChirpSignal : public Graph
 {
 private:
-    double m_inital_frequency;
-    double m_final_frequency;
-    double m_phase_shift;
-    double m_amplitude;
+    ChirpArg m_unique_arg;
 
     double m_inital_frequency_copy;
     double m_final_frequency_copy;

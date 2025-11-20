@@ -16,7 +16,7 @@ MathFunction::~MathFunction()
 void MathFunction::calculateGraphData()
 {
     m_graph_data.clear();
-    m_graph_data.reserve(static_cast<size_t>((m_x_max - m_x_min) * m_sample_frequency + 1) * 1.05);
+    m_graph_data.reserve(static_cast<size_t>((m_base_arg._x_max - m_base_arg._x_min) * m_base_arg._sample_frequency + 1) * 1.05);
 
     typedef exprtk::symbol_table<double> symbol_table_t;
     typedef exprtk::expression<double> expression_t;
@@ -32,7 +32,7 @@ void MathFunction::calculateGraphData()
 
     parser_t parser;
 
-    for (x = m_x_min; x <= m_x_max; x+= 1.0/m_sample_frequency) 
+    for (x = m_base_arg._x_min; x <= m_base_arg._x_max; x+= 1.0/m_base_arg._sample_frequency) 
     {
         m_graph_data.push_back(expression.value());
     }
@@ -47,8 +47,8 @@ void MathFunction::renderImGuiEditGraph()
 
     // Set position for the right-aligned box
     ImGui::SetCursorPos(ImVec2(499, 1)); // Adjust offset
-    ImGui::BeginChild(("MathFunction##list" + m_graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
-    ImGui::Text(("  Selected graph: " + m_graph_name).c_str());
+    ImGui::BeginChild(("MathFunction##list" + m_base_arg._graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
+    ImGui::Text(("  Selected graph: " + m_base_arg._graph_name).c_str());
     ImGui::Dummy(ImVec2(10, 10));
 
     ImGui::Dummy(ImVec2(0, 15));
@@ -158,36 +158,36 @@ void MathFunction::renderImGuiEditGraph()
 
 void MathFunction::copyArgumentsForGui()
 {
-    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_graph_name.c_str(), _TRUNCATE);
-    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_x_label.c_str(), _TRUNCATE);
-    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_y_label.c_str(), _TRUNCATE);
+    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_base_arg._graph_name.c_str(), _TRUNCATE);
+    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_base_arg._x_label.c_str(), _TRUNCATE);
+    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_base_arg._y_label.c_str(), _TRUNCATE);
 
     strncpy_s(m_function_copy, sizeof(m_function_copy), m_function.c_str(), _TRUNCATE);
 
-    m_sample_freq_copy = m_sample_frequency;
-    m_x_min_copy = m_x_min;
-    m_x_max_copy = m_x_max;
+    m_sample_freq_copy = m_base_arg._sample_frequency;
+    m_x_min_copy = m_base_arg._x_min;
+    m_x_max_copy = m_base_arg._x_max;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour_copy[i] = m_line_colour[i];
+        m_line_colour_copy[i] = m_base_arg._line_colour[i];
     }
-    m_line_type_copy = m_line_type;
+    m_line_type_copy = m_base_arg._line_type;
 }
 
 void MathFunction::overrideOriginalArguments()
 {
-    m_graph_name = m_graph_name_copy;
-    m_x_label = m_label_x_copy;
-    m_y_label = m_label_y_copy;
+    m_base_arg._graph_name = m_graph_name_copy;
+    m_base_arg._x_label = m_label_x_copy;
+    m_base_arg._y_label = m_label_y_copy;
 
     m_function = m_function_copy;
 
-    m_sample_frequency = m_sample_freq_copy;
-    m_x_min = m_x_min_copy;
-    m_x_max = m_x_max_copy;
+    m_base_arg._sample_frequency = m_sample_freq_copy;
+    m_base_arg._x_min = m_x_min_copy;
+    m_base_arg._x_max = m_x_max_copy;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour[i] = m_line_colour_copy[i];
+        m_base_arg._line_colour[i] = m_line_colour_copy[i];
     }
-    m_line_type = m_line_type_copy;
+    m_base_arg._line_type = m_line_type_copy;
 }

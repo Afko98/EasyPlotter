@@ -1,11 +1,16 @@
 #pragma once
 #include "Graph.h"
+
+struct CosineArg {
+    double _amplitude;
+    double _frequency;
+    double _phase_shift;
+};
+
 class Cosine : public Graph
 {
 private:
-    double m_amplitude;
-    double m_frequency;
-    double m_phase_shift;
+    CosineArg m_unique_arg;
 
     double m_amplitude_copy;
     double m_frequency_copy;

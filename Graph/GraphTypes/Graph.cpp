@@ -6,10 +6,10 @@ bool Graph::saveDataToFile()
 {
     if (!m_parent || m_parent->getDirPath() == "")
         return false;
-    std::ofstream dataFile(m_parent->getDirPath() + "\\" + m_graph_name + ".epd", std::ios::binary); // Open the file in binary mode
+    std::ofstream dataFile(m_parent->getDirPath() + "\\" + m_base_arg._graph_name + ".epd", std::ios::binary); // Open the file in binary mode
 
     if (!dataFile.is_open()) {
-        std::cerr << m_parent->getDirPath() + "\\" + m_graph_name + ".epd" << std::endl;
+        std::cerr << m_parent->getDirPath() + "\\" + m_base_arg._graph_name + ".epd" << std::endl;
         return false;
     }
 
@@ -47,19 +47,19 @@ Graph::Graph(GraphType graph_type, std::string graph_name, double sample_freq, d
     std::cout << "Path is " << escapedPath;
     gp = new Gnuplot(escapedPath);
 
-    m_x_max = x_max+0.0000000001;
-    m_x_min = x_min;
-    m_sample_frequency = sample_freq;
-    m_graph_name = graph_name;
-    m_x_label = label_x;
-    m_y_label = label_y;
-    m_graph_type = graph_type;
+    m_base_arg._x_max = x_max+0.0000000001;
+    m_base_arg._x_min = x_min;
+    m_base_arg._sample_frequency = sample_freq;
+    m_base_arg._graph_name = graph_name;
+    m_base_arg._x_label = label_x;
+    m_base_arg.m_base_arg._y_label = label_y;
+    m_base_arg._graph_type = graph_type;
     m_parent = nullptr;
     for (int i = 0; i < 4; ++i) 
     {
-        m_line_colour[i] = line_colour[i];
+        m_base_arg.m_base_arg._line_colour[i] = line_colour[i];
     }
-    m_line_type = line_type;
+    m_base_arg._line_type = line_type;
 }
 
 Graph::~Graph() {
@@ -68,17 +68,17 @@ Graph::~Graph() {
 
 void Graph::setSampleFrequency(double frequency)
 {
-    m_sample_frequency = frequency;
+    m_base_arg._sample_frequency = frequency;
 }
 
 void Graph::setXMin(double x_min)
 {
-    m_x_min = x_min;
+    m_base_arg._x_min = x_min;
 }
 
 void Graph::setXMax(double x_max)
 {
-    m_x_max = x_max;
+    m_base_arg._x_max = x_max;
 }
 
 std::vector<double> Graph::getGraphData()  // reading from file...
@@ -88,10 +88,10 @@ std::vector<double> Graph::getGraphData()  // reading from file...
     if (!m_parent)
         return m_graph_data;
 
-    std::ifstream data_file(m_parent->getDirPath() + "\\" + m_graph_name + ".epd", std::ios::binary);
+    std::ifstream data_file(m_parent->getDirPath() + "\\" + m_base_arg._graph_name + ".epd", std::ios::binary);
     if (!data_file.is_open())
     {
-        std::cerr << "Failed to open file for reading: " << m_graph_name + ".epd" << std::endl;
+        std::cerr << "Failed to open file for reading: " << m_base_arg._graph_name + ".epd" << std::endl;
         return std::vector<double>();
     }
 
@@ -131,11 +131,11 @@ void Graph::plotGraph() {
     //if has parent load from file, if not load directly from variable
     *gp << "set autoscale yfix\n";
 *gp << "set offset 0, 0, 0.1, 0.1\n"; 
-    *gp << "plot '" << m_parent->getDirPath() + "\\" + m_graph_name + ".epd"
-        << "' binary format='%double' using ($0 * " << 1.0 / m_sample_frequency << " + " << m_x_min
-        << "):1 with lines title '" << m_graph_name << "'\n";
+    *gp << "plot '" << m_parent->getDirPath() + "\\" + m_base_arg.m_base_arg._graph_name + ".epd"
+        << "' binary format='%double' using ($0 * " << 1.0 / m_base_arg._sample_frequency << " + " << m_base_arg._x_min
+        << "):1 with lines title '" << m_base_arg.m_base_arg._graph_name << "'\n";
 
-    //*gp << "plot '" << m_parent->getDirPath() + "\\" + m_graph_name + ".epd" << "' binary format='%double' using ($0 * " << 1.0/m_sample_frequency << " + " << m_x_min << "):1 with lines title '"<< m_graph_name <<"'\n";
+    //*gp << "plot '" << m_parent->getDirPath() + "\\" + m_base_arg._graph_name + ".epd" << "' binary format='%double' using ($0 * " << 1.0/m_base_arg._sample_frequency << " + " << m_base_arg._x_min << "):1 with lines title '"<< m_base_arg._graph_name <<"'\n";
     gp->flush();  // Ensure the command is sent
     std::this_thread::sleep_for(std::chrono::milliseconds(500));  // Optional: Give Gnuplot time to render
 }

@@ -43,9 +43,14 @@ Plot::Plot(std::string dir_path, std::string name) : m_name(name), m_dir_path(di
             throw std::runtime_error("Failed to create directory: " + m_dir_path);
         }
     }
-    else
+    else    // check for already existing graphs in this folder
     {
-        //dir already exists, check files
+        /*
+            1. get all .epa files
+            2. get data
+            3. create graphs
+        */
+
     }
     m_graph_edit_selected = nullptr;
     m_graph_calculate_selected = nullptr;

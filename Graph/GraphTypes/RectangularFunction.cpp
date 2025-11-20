@@ -13,11 +13,11 @@ RectangularFunction::~RectangularFunction()
 
 void RectangularFunction::calculateGraphData()
 {
-    m_graph_data = std::vector<double>(static_cast<size_t>((m_x_max - m_x_min) * m_sample_frequency + 1), 0);
-    int index_center = static_cast<int>((-m_x_min) * m_sample_frequency);
+    m_graph_data = std::vector<double>(static_cast<size_t>((m_base_arg._x_max - m_base_arg._x_min) * m_base_arg._sample_frequency + 1), 0);
+    int index_center = static_cast<int>((-m_base_arg._x_min) * m_base_arg._sample_frequency);
 
-    int index_start = index_center - static_cast<int>((m_width / 2) * m_sample_frequency);
-    int index_end = index_center + static_cast<int>((m_width / 2) * m_sample_frequency);
+    int index_start = index_center - static_cast<int>((m_width / 2) * m_base_arg._sample_frequency);
+    int index_end = index_center + static_cast<int>((m_width / 2) * m_base_arg._sample_frequency);
 
     index_start = std::max(index_start, 0);
     index_end = std::min(index_end, static_cast<int>(m_graph_data.size()) - 1);
@@ -36,8 +36,8 @@ void RectangularFunction::renderImGuiEditGraph()
 
     // Set position for the right-aligned box
     ImGui::SetCursorPos(ImVec2(499, 1)); // Adjust offset
-    ImGui::BeginChild(("RectangularFunction##list" + m_graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
-    ImGui::Text(("Selected graph: " + m_graph_name).c_str());
+    ImGui::BeginChild(("RectangularFunction##list" + m_base_arg._graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
+    ImGui::Text(("Selected graph: " + m_base_arg._graph_name).c_str());
     ImGui::Dummy(ImVec2(10, 10));
 
     ImGui::Dummy(ImVec2(0, 15));
@@ -130,40 +130,40 @@ void RectangularFunction::renderImGuiEditGraph()
 
 void RectangularFunction::copyArgumentsForGui()
 {
-    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_graph_name.c_str(), _TRUNCATE);
-    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_x_label.c_str(), _TRUNCATE);
-    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_y_label.c_str(), _TRUNCATE);
+    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_base_arg._graph_name.c_str(), _TRUNCATE);
+    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_base_arg._x_label.c_str(), _TRUNCATE);
+    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_base_arg._y_label.c_str(), _TRUNCATE);
 
     m_amplitude_copy = m_amplitude;
     m_shift_copy = m_shift;
     m_width_copy = m_width;
 
-    m_sample_freq_copy = m_sample_frequency;
-    m_x_min_copy = m_x_min;
-    m_x_max_copy = m_x_max;
+    m_sample_freq_copy = m_base_arg._sample_frequency;
+    m_x_min_copy = m_base_arg._x_min;
+    m_x_max_copy = m_base_arg._x_max;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour_copy[i] = m_line_colour[i];
+        m_line_colour_copy[i] = m_base_arg._line_colour[i];
     }
-    m_line_type_copy = m_line_type;
+    m_line_type_copy = m_base_arg._line_type;
 }
 
 void RectangularFunction::overrideOriginalArguments()
 {
-    m_graph_name = m_graph_name_copy;
-    m_x_label = m_label_x_copy;
-    m_y_label = m_label_y_copy;
+    m_base_arg._graph_name = m_graph_name_copy;
+    m_base_arg._x_label = m_label_x_copy;
+    m_base_arg._y_label = m_label_y_copy;
 
     m_amplitude = m_amplitude_copy;
     m_shift = m_shift_copy;
     m_width = m_width_copy;
 
-    m_sample_frequency = m_sample_freq_copy;
-    m_x_min = m_x_min_copy;
-    m_x_max = m_x_max_copy;
+    m_base_arg._sample_frequency = m_sample_freq_copy;
+    m_base_arg._x_min = m_x_min_copy;
+    m_base_arg._x_max = m_x_max_copy;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour[i] = m_line_colour_copy[i];
+        m_base_arg._line_colour[i] = m_line_colour_copy[i];
     }
-    m_line_type = m_line_type_copy;
+    m_base_arg._line_type = m_line_type_copy;
 }

@@ -176,6 +176,7 @@
     <ClCompile Include="Graph\GraphTypes\ImpulseSignal.cpp" />
     <ClCompile Include="Graph\GraphTypes\PulseTrain.cpp" />
     <ClCompile Include="Graph\GraphTypes\TriangularWave.cpp" />
+    <ClCompile Include="Serilization.cpp" />
     <ClCompile Include="UseImGui.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +214,7 @@
     <ClInclude Include="Graph\GraphTypes\ImpulseSignal.h" />
     <ClInclude Include="Graph\GraphTypes\PulseTrain.h" />
     <ClInclude Include="Graph\GraphTypes\TriangularWave.h" />
+    <ClInclude Include="Serilization.h" />
     <ClInclude Include="UseImGui.h" />
   </ItemGroup>
   <ItemGroup>

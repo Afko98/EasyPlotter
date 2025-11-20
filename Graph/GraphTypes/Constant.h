@@ -4,11 +4,14 @@
 // Class definition
 #include "./Graph.h"
 
+struct ConstantArg {
+    double _amplitude;
+};
 
 class Constant : public Graph
 {
 private:
-    double m_amplitude;
+    ConstantArg m_unique_arg;
     double m_amplitude_copy;
 
     void overrideOriginalArguments();

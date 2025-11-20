@@ -2,8 +2,10 @@
 #include <cmath>
 
 ExponentialFunction::ExponentialFunction(double exponent, double shift, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
-    : Graph(GraphType::Exponential_Function, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_exponent(exponent), m_shift(shift)
+    : Graph(GraphType::Exponential_Function, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y)
 {
+    m_unique_arg._shift = shift;
+    m_unique_arg._exponent = exponent;
     copyArgumentsForGui();
     calculateGraphData();
 }
@@ -16,11 +18,11 @@ ExponentialFunction::~ExponentialFunction()
 void ExponentialFunction::calculateGraphData()
 {
     m_graph_data.clear();
-    m_graph_data.reserve(static_cast<size_t>((m_x_max - m_x_min) * m_sample_frequency + 1) * 1.05);
+    m_graph_data.reserve(static_cast<size_t>((m_base_arg._x_max - m_base_arg._x_min) * m_base_arg._sample_frequency + 1) * 1.05);
 
-    for (double x = m_x_min; x <= m_x_max; x += 1.0 / m_sample_frequency)
+    for (double x = m_base_arg._x_min; x <= m_base_arg._x_max; x += 1.0 / m_base_arg._sample_frequency)
     {
-        double value = std::exp((x - m_shift) * m_exponent);
+        double value = std::exp((x - m_unique_arg._shift) * m_unique_arg._exponent);
         if (std::isinf(value))
             value = std::numeric_limits<double>::max();
 
@@ -37,8 +39,8 @@ void ExponentialFunction::renderImGuiEditGraph()
 
     // Set position for the right-aligned box
     ImGui::SetCursorPos(ImVec2(499, 1)); // Adjust offset
-    ImGui::BeginChild(("ExponentialFunction##list" + m_graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
-    ImGui::Text(("Selected graph: " + m_graph_name).c_str());
+    ImGui::BeginChild(("ExponentialFunction##list" + m_base_arg._graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
+    ImGui::Text(("Selected graph: " + m_base_arg._graph_name).c_str());
     ImGui::Dummy(ImVec2(10, 10));
 
     ImGui::Dummy(ImVec2(0, 15));
@@ -130,39 +132,39 @@ void ExponentialFunction::renderImGuiEditGraph()
 
 void ExponentialFunction::copyArgumentsForGui()
 {
-    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_graph_name.c_str(), _TRUNCATE);
-    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_x_label.c_str(), _TRUNCATE);
-    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_y_label.c_str(), _TRUNCATE);
+    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_base_arg._graph_name.c_str(), _TRUNCATE);
+    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_base_arg._x_label.c_str(), _TRUNCATE);
+    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_base_arg._y_label.c_str(), _TRUNCATE);
 
-    m_exponent_copy = m_exponent;
-    m_shift_copy = m_shift;
+    m_exponent_copy = m_unique_arg._exponent;
+    m_shift_copy = m_unique_arg._shift;
 
-    m_sample_freq_copy = m_sample_frequency;
-    m_x_min_copy = m_x_min;
-    m_x_max_copy = m_x_max;
+    m_sample_freq_copy = m_base_arg._sample_frequency;
+    m_x_min_copy = m_base_arg._x_min;
+    m_x_max_copy = m_base_arg._x_max;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour_copy[i] = m_line_colour[i];
+        m_line_colour_copy[i] = m_base_arg._line_colour[i];
     }
-    m_line_type_copy = m_line_type;
+    m_line_type_copy = m_base_arg._line_type;
 }
 
 void ExponentialFunction::overrideOriginalArguments()
 {
-    m_graph_name = m_graph_name_copy;
-    m_x_label = m_label_x_copy;
-    m_y_label = m_label_y_copy;
+    m_base_arg._graph_name = m_graph_name_copy;
+    m_base_arg._x_label = m_label_x_copy;
+    m_base_arg._y_label = m_label_y_copy;
 
-    m_exponent = m_exponent_copy;
-    m_shift = m_shift_copy;
+    m_unique_arg._exponent = m_exponent_copy;
+    m_unique_arg._shift = m_shift_copy;
 
-    m_sample_frequency = m_sample_freq_copy;
-    m_x_min = m_x_min_copy;
-    m_x_max = m_x_max_copy;
+    m_base_arg._sample_frequency = m_sample_freq_copy;
+    m_base_arg._x_min = m_x_min_copy;
+    m_base_arg._x_max = m_x_max_copy;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour[i] = m_line_colour_copy[i];
+        m_base_arg._line_colour[i] = m_line_colour_copy[i];
     }
-    m_line_type = m_line_type_copy;
+    m_base_arg._line_type = m_line_type_copy;
 }
 

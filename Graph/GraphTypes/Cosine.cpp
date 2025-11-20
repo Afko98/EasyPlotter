@@ -1,8 +1,11 @@
 ﻿#include "Cosine.h"
 
 Cosine::Cosine(double amplitude, double frequency, double phase_shift, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
-    : Graph(GraphType::Cosine, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_amplitude(amplitude), m_frequency(frequency), m_phase_shift(phase_shift)
+    : Graph(GraphType::Cosine, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y)
 {
+    m_unique_arg._amplitude = amplitude;
+    m_unique_arg._frequency = frequency;
+    m_unique_arg._phase_shift = phase_shift;
     copyArgumentsForGui();
     calculateGraphData();
 }
@@ -14,30 +17,30 @@ Cosine::~Cosine()
 
 void Cosine::calculateGraphData()
 {
-    double period = 1.0 / m_frequency;
-    double sample_period = 1.0 / m_sample_frequency;
+    double period = 1.0 / m_unique_arg._frequency;
+    double sample_period = 1.0 / m_base_arg._sample_frequency;
 
-    m_graph_data.reserve(static_cast<size_t>(((m_x_max - m_x_min) * m_sample_frequency) + 1) * 1.05);
+    m_graph_data.reserve(static_cast<size_t>(((m_base_arg._x_max - m_base_arg._x_min) * m_base_arg._sample_frequency) + 1) * 1.05);
     
-    if (1.1 / m_frequency > m_x_max - m_x_min)
+    if (1.1 / m_unique_arg._frequency > m_base_arg._x_max - m_base_arg._x_min)
     {
-        for (double x = m_x_min; x <= m_x_max; x += sample_period)
+        for (double x = m_base_arg._x_min; x <= m_base_arg._x_max; x += sample_period)
         {
-            m_graph_data.push_back(std::cos(TWO_PI * m_frequency * x + m_phase_shift));
+            m_graph_data.push_back(std::cos(TWO_PI * m_unique_arg._frequency * x + m_unique_arg._phase_shift));
         }
         return;
     }
 
     std::vector<double>one_period;
-    one_period.reserve(static_cast<size_t>((1.0 / m_frequency * m_sample_frequency) + 1) * 1.1);
+    one_period.reserve(static_cast<size_t>((1.0 / m_unique_arg._frequency * m_base_arg._sample_frequency) + 1) * 1.1);
 
-    for (double x = m_x_min; x < m_x_min + period; x += sample_period)
+    for (double x = m_base_arg._x_min; x < m_base_arg._x_min + period; x += sample_period)
     {
-        one_period.push_back(m_amplitude * std::cos(TWO_PI * m_frequency * x + m_phase_shift));
+        one_period.push_back(m_unique_arg._amplitude * std::cos(TWO_PI * m_unique_arg._frequency * x + m_unique_arg._phase_shift));
     }
 
-    std::cout << static_cast<size_t>((m_x_max - m_x_min) / period);
-    for (int i = 0; i < static_cast<size_t>((m_x_max - m_x_min) / period); i++)  // adding values for whole periods
+    std::cout << static_cast<size_t>((m_base_arg._x_max - m_base_arg._x_min) / period);
+    for (int i = 0; i < static_cast<size_t>((m_base_arg._x_max - m_base_arg._x_min) / period); i++)  // adding values for whole periods
     {
         for (const double &value : one_period)
         {
@@ -46,12 +49,12 @@ void Cosine::calculateGraphData()
     }
 
     std::cout << std::endl;
-    std::cout << ((m_x_max - m_x_min) / period);
+    std::cout << ((m_base_arg._x_max - m_base_arg._x_min) / period);
     std::cout << std::endl;
-    std::cout << static_cast<size_t>((m_x_max - m_x_min) / period);
+    std::cout << static_cast<size_t>((m_base_arg._x_max - m_base_arg._x_min) / period);
     std::cout << std::endl;
-    std::cout << "left samples" << static_cast<size_t>((((m_x_max - m_x_min) / period) - (static_cast<int>((m_x_max - m_x_min) / period))) * one_period.size());
-    for (int i = 0; i <= static_cast<size_t>((   ((m_x_max - m_x_min) / period) - (static_cast<int>((m_x_max - m_x_min) / period))) * one_period.size()); i++)  // adding values for whole periods
+    std::cout << "left samples" << static_cast<size_t>((((m_base_arg._x_max - m_base_arg._x_min) / period) - (static_cast<int>((m_base_arg._x_max - m_base_arg._x_min) / period))) * one_period.size());
+    for (int i = 0; i <= static_cast<size_t>((   ((m_base_arg._x_max - m_base_arg._x_min) / period) - (static_cast<int>((m_base_arg._x_max - m_base_arg._x_min) / period))) * one_period.size()); i++)  // adding values for whole periods
     {
         m_graph_data.push_back(one_period[i]);
     }
@@ -65,8 +68,8 @@ void Cosine::renderImGuiEditGraph()
 
     // Set position for the right-aligned box
     ImGui::SetCursorPos(ImVec2(499, 1)); // Adjust offset
-    ImGui::BeginChild(("Cosine##list" + m_graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
-    ImGui::Text(("Selected graph: " + m_graph_name).c_str());
+    ImGui::BeginChild(("Cosine##list" + m_base_arg._graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
+    ImGui::Text(("Selected graph: " + m_base_arg._graph_name).c_str());
     ImGui::Dummy(ImVec2(10, 10));
 
     ImGui::Dummy(ImVec2(0, 15));
@@ -159,41 +162,41 @@ void Cosine::renderImGuiEditGraph()
 
 void Cosine::copyArgumentsForGui()
 {
-    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_graph_name.c_str(), _TRUNCATE);
-    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_x_label.c_str(), _TRUNCATE);
-    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_y_label.c_str(), _TRUNCATE);
+    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_base_arg._graph_name.c_str(), _TRUNCATE);
+    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_base_arg._x_label.c_str(), _TRUNCATE);
+    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_base_arg._y_label.c_str(), _TRUNCATE);
 
-    m_phase_shift_copy = m_phase_shift;
-    m_amplitude_copy = m_amplitude;
-    m_frequency_copy = m_frequency;
+    m_phase_shift_copy = m_unique_arg._phase_shift;
+    m_amplitude_copy = m_unique_arg._amplitude;
+    m_frequency_copy = m_unique_arg._frequency;
 
-    m_sample_freq_copy = m_sample_frequency;
-    m_x_min_copy = m_x_min;
-    m_x_max_copy = m_x_max;
+    m_sample_freq_copy = m_base_arg._sample_frequency;
+    m_x_min_copy = m_base_arg._x_min;
+    m_x_max_copy = m_base_arg._x_max;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour_copy[i] = m_line_colour[i];
+        m_line_colour_copy[i] = m_base_arg._line_colour[i];
     }
-    m_line_type_copy = m_line_type;
+    m_line_type_copy = m_base_arg._line_type;
 }
 
 void Cosine::overrideOriginalArguments()
 {
-    m_graph_name = m_graph_name_copy;
-    m_x_label = m_label_x_copy;
-    m_y_label = m_label_y_copy;
+    m_base_arg._graph_name = m_graph_name_copy;
+    m_base_arg._x_label = m_label_x_copy;
+    m_base_arg._y_label = m_label_y_copy;
 
-    m_phase_shift = m_phase_shift_copy;
-    m_amplitude = m_amplitude_copy;
-    m_frequency = m_frequency_copy;
+    m_unique_arg._phase_shift = m_phase_shift_copy;
+    m_unique_arg._amplitude = m_amplitude_copy;
+    m_unique_arg._frequency = m_frequency_copy;
 
-    m_sample_frequency = m_sample_freq_copy;
-    m_x_min = m_x_min_copy;
-    m_x_max = m_x_max_copy;
+    m_base_arg._sample_frequency = m_sample_freq_copy;
+    m_base_arg._x_min = m_x_min_copy;
+    m_base_arg._x_max = m_x_max_copy;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour[i] = m_line_colour_copy[i];
+        m_base_arg._line_colour[i] = m_line_colour_copy[i];
     }
-    m_line_type = m_line_type_copy;
+    m_base_arg._line_type = m_line_type_copy;
 }
 

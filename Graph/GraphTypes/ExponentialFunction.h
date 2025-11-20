@@ -1,10 +1,15 @@
 #pragma once
 #include "Graph.h"
+
+struct ExpArg {
+    double _exponent;
+    double _shift;
+};
+
 class ExponentialFunction : public Graph
 {
 private:
-    double m_exponent;
-    double m_shift;
+    ExpArg m_unique_arg;
 
     double m_exponent_copy;
     double m_shift_copy;

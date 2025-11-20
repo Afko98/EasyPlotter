@@ -9,7 +9,7 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#include "/exprtk/exprtk.hpp"
+#include "exprtk.hpp"
 #include <iostream>
 #include "imgui.h"
 #include "imgui_impl_dx9.h"
@@ -75,7 +75,7 @@ int main(int, char**)
     ImGui_ImplDX9_Init(g_pd3dDevice);
 
     ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 20.0f); // Adjust size as needed
+    io.Fonts->AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 16.0f); // Adjust size as needed
     io.Fonts->Build();
     // Our state
     bool show_demo_window = true;

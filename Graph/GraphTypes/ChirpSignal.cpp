@@ -1,7 +1,11 @@
 #include "ChirpSignal.h"
 ChirpSignal::ChirpSignal(double amplitude, double inital_f, double final_f, double phase_shift, std::string graph_name, double sample_freq, double x_min, double x_max, float line_colour[4], int line_type, std::string label_x, std::string label_y)
-    : Graph(GraphType::Chirp_Signal, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y), m_amplitude(amplitude), m_phase_shift(phase_shift), m_inital_frequency(inital_f), m_final_frequency(final_f)
+    : Graph(GraphType::Chirp_Signal, graph_name, sample_freq, x_min, x_max, line_colour, line_type, label_x, label_y)
 {
+    m_unique_arg._amplitude = amplitude;
+    m_unique_arg._phase_shift = phase_shift;
+    m_unique_arg._final_frequency = final_f;
+    m_unique_arg._inital_frequency = inital_f;
     copyArgumentsForGui();
     calculateGraphData();
 }
@@ -14,15 +18,15 @@ ChirpSignal::~ChirpSignal()
 void ChirpSignal::calculateGraphData()
 {
     m_graph_data.clear();
-    m_graph_data.reserve(static_cast<size_t>((m_x_max - m_x_min) * m_sample_frequency + 1) *1.05);
+    m_graph_data.reserve(static_cast<size_t>((m_base_arg._x_max - m_base_arg._x_min) * m_base_arg._sample_frequency + 1) *1.05);
 
-    double delta_frequency = (m_final_frequency - m_inital_frequency) / ((m_x_max - m_x_min) * m_sample_frequency + 1);
+    double delta_frequency = (m_unique_arg._final_frequency - m_unique_arg._inital_frequency) / ((m_base_arg._x_max - m_base_arg._x_min) * m_base_arg._sample_frequency + 1);
     std::cout << "delta frequency: " << delta_frequency;
 
-    double current_frequency = m_inital_frequency; // Use a local copy
-    for (int i = 0; i < (m_x_max - m_x_min) * m_sample_frequency + 1; i++)
+    double current_frequency = m_unique_arg._inital_frequency; // Use a local copy
+    for (int i = 0; i < (m_base_arg._x_max - m_base_arg._x_min) * m_base_arg._sample_frequency + 1; i++)
     {
-        double x = m_x_min + (i * (1.0 / m_sample_frequency));
+        double x = m_base_arg._x_min + (i * (1.0 / m_base_arg._sample_frequency));
         m_graph_data.push_back(std::sin(TWO_PI * current_frequency * x));
         current_frequency += delta_frequency;
     }
@@ -36,8 +40,8 @@ void ChirpSignal::renderImGuiEditGraph()
 
     // Set position for the right-aligned box
     ImGui::SetCursorPos(ImVec2(499, 1)); // Adjust offset
-    ImGui::BeginChild(("ChirpSignal##list" + m_graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
-    ImGui::Text(("Selected graph: " + m_graph_name).c_str());
+    ImGui::BeginChild(("ChirpSignal##list" + m_base_arg._graph_name).c_str(), ImVec2(windowSize.x - 500, windowSize.y - 2), true, ImGuiWindowFlags_NoMove);
+    ImGui::Text(("Selected graph: " + m_base_arg._graph_name).c_str());
     ImGui::Dummy(ImVec2(10, 10));
 
     ImGui::Dummy(ImVec2(0, 15));
@@ -131,42 +135,42 @@ void ChirpSignal::renderImGuiEditGraph()
 
 void ChirpSignal::copyArgumentsForGui()
 {
-    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_graph_name.c_str(), _TRUNCATE);
-    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_x_label.c_str(), _TRUNCATE);
-    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_y_label.c_str(), _TRUNCATE);
+    strncpy_s(m_graph_name_copy, sizeof(m_graph_name_copy), m_base_arg._graph_name.c_str(), _TRUNCATE);
+    strncpy_s(m_label_x_copy, sizeof(m_label_x_copy), m_base_arg._x_label.c_str(), _TRUNCATE);
+    strncpy_s(m_label_y_copy, sizeof(m_label_y_copy), m_base_arg._y_label.c_str(), _TRUNCATE);
 
-    m_amplitude_copy = m_amplitude;
-    m_phase_shift_copy = m_phase_shift;
-    m_inital_frequency_copy = m_inital_frequency;
-    m_final_frequency_copy = m_final_frequency;
+    m_amplitude_copy = m_unique_arg._amplitude;
+    m_phase_shift_copy = m_unique_arg._phase_shift;
+    m_inital_frequency_copy = m_unique_arg._inital_frequency;
+    m_final_frequency_copy = m_unique_arg._final_frequency;
 
-    m_sample_freq_copy = m_sample_frequency;
-    m_x_min_copy = m_x_min;
-    m_x_max_copy = m_x_max;
+    m_sample_freq_copy = m_base_arg._sample_frequency;
+    m_x_min_copy = m_base_arg._x_min;
+    m_x_max_copy = m_base_arg._x_max;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour_copy[i] = m_line_colour[i];
+        m_line_colour_copy[i] = m_base_arg._line_colour[i];
     }
-    m_line_type_copy = m_line_type;
+    m_line_type_copy = m_base_arg._line_type;
 }
 
 void ChirpSignal::overrideOriginalArguments()
 {
-    m_graph_name = m_graph_name_copy;
-    m_x_label = m_label_x_copy;
-    m_y_label = m_label_y_copy;
+    m_base_arg._graph_name = m_graph_name_copy;
+    m_base_arg._x_label = m_label_x_copy;
+    m_base_arg._y_label = m_label_y_copy;
 
-    m_amplitude = m_amplitude_copy;
-    m_phase_shift = m_phase_shift_copy;
-    m_inital_frequency = m_inital_frequency_copy;
-    m_final_frequency = m_final_frequency_copy;
+    m_unique_arg._amplitude = m_amplitude_copy;
+    m_unique_arg._phase_shift = m_phase_shift_copy;
+    m_unique_arg._inital_frequency = m_inital_frequency_copy;
+    m_unique_arg._final_frequency = m_final_frequency_copy;
 
-    m_sample_frequency = m_sample_freq_copy;
-    m_x_min = m_x_min_copy;
-    m_x_max = m_x_max_copy;
+    m_base_arg._sample_frequency = m_sample_freq_copy;
+    m_base_arg._x_min = m_x_min_copy;
+    m_base_arg._x_max = m_x_max_copy;
     for (int i = 0; i < 4; ++i)
     {
-        m_line_colour[i] = m_line_colour_copy[i];
+        m_base_arg._line_colour[i] = m_line_colour_copy[i];
     }
-    m_line_type = m_line_type_copy;
+    m_base_arg._line_type = m_line_type_copy;
 }
